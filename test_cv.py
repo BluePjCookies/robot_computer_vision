@@ -1,5 +1,5 @@
 
-import cv2#导入包
+import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import pyrealsense2 as rs
@@ -10,8 +10,8 @@ from mpl_toolkits.mplot3d import Axes3D
 def find_dirty_spot(img_test3,depth_map):
     LabImg = cv2.cvtColor(img_test3, cv2.COLOR_BGR2Lab)
     L,A,B = cv2.split(LabImg)
-    blur = cv2.GaussianBlur(B, (3,3), 0)
-    ret,thresh = cv2.threshold(blur,145,255,cv2.THRESH_BINARY)
+    blur = cv2.GaussianBlur(B, (3,3), 0)#if the dirty spot is transparent, pls change B into A
+    ret,thresh = cv2.threshold(blur,145,255,cv2.THRESH_BINARY)#second value is the treshold value that if you want the code more active pls decrease the value in opposite increase the value. Usually 140-150 is recommended 
     cv2.imshow("test3",thresh)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
@@ -34,11 +34,11 @@ def find_dirty_spot(img_test3,depth_map):
         (h, k) = center
         (a, b) = axes
 
-        # 计算焦点位置
+  
         print("a:", a)
         print("b:", b)
         c = np.sqrt(abs((0.5*a)**2 - (0.5*b)**2))
-        theta = np.radians(angle)  # 将角度转换为弧度
+        theta = np.radians(angle)  
         cos_theta = np.cos(theta)
         sin_theta = np.sin(theta)
 
@@ -88,58 +88,59 @@ def find_dirty_spot(img_test3,depth_map):
     #number of contour,number of points in the contour,0,x/y
     for i in range(len(points_array)):
 
-        # able1=0
-        # able2=0
-        # able3=0
-        # able4=0
+        able1=0
+        able2=0
+        able3=0
+        able4=0
         
-        # rows = len(contours[i])
-        # cols = 3
-        # temp_plane_poins = [[0 for _ in range(cols)] for _ in range(rows)]
+        rows = len(contours[i])
+        cols = 3
+        temp_plane_poins = [[0 for _ in range(cols)] for _ in range(rows)]
 
-        # for j in range(len(contours[i])):
+        for j in range(len(contours[i])):
             
-        #     temp_contours[i][j][0][0]=contours[i][j][0][0]-points_array[i,0]
-        #     temp_contours[i][j][0][1]=contours[i][j][0][1]-points_array[i,1]
-        #     temp=(temp_contours[i][j][0][1]**2+temp_contours[i][j][0][0]**2)**0.5
-        #     temp_plane_poins[j][0]=temp
-        #     temp_plane_poins[j][1]=temp_contours[i][j][0][0]
-        #     temp_plane_poins[j][2]=temp_contours[i][j][0][1]
-        # temp_plane_poins.sort(key=lambda x: x[0])
+            temp_contours[i][j][0][0]=contours[i][j][0][0]-points_array[i,0]
+            temp_contours[i][j][0][1]=contours[i][j][0][1]-points_array[i,1]
+            temp=(temp_contours[i][j][0][1]**2+temp_contours[i][j][0][0]**2)**0.5
+            temp_plane_poins[j][0]=temp
+            temp_plane_poins[j][1]=temp_contours[i][j][0][0]
+            temp_plane_poins[j][2]=temp_contours[i][j][0][1]
+        temp_plane_poins.sort(key=lambda x: x[0])
 
-        # for k in range(len(temp_plane_poins)):
-        #     if(temp_plane_poins[k][1]>0 and temp_plane_poins[k][2]>0 and able1==0):
-        #         plane_points[i][0][0]=temp_plane_poins[k][1]+points_array[i,0]
-        #         plane_points[i][0][1]=temp_plane_poins[k][2]+points_array[i,1]
-        #         depth_value = depth_map[int(plane_points[i][0][1]), int(plane_points[i][0][0])] 
-        #         plane_points[i][0][2]=depth_value
-        #         plane_points[i][0][3]=temp_plane_poins[k][0]
-        #         able1=1
-        #     if(temp_plane_poins[k][1]<0 and temp_plane_poins[k][2]>0 and able2==0):
-        #         plane_points[i][1][0]=temp_plane_poins[k][1]+points_array[i,0]
-        #         plane_points[i][1][1]=temp_plane_poins[k][2]+points_array[i,1]
-        #         depth_value = depth_map[int(plane_points[i][1][1]), int(plane_points[i][1][0])]
-        #         plane_points[i][1][2]=depth_value
-        #         plane_points[i][1][3]=temp_plane_poins[k][0]
-        #         able2=1
-        #     if(temp_plane_poins[k][1]<0 and temp_plane_poins[k][2]<0 and able3==0):
-        #         plane_points[i][2][0]=temp_plane_poins[k][1]+points_array[i,0]
-        #         plane_points[i][2][1]=temp_plane_poins[k][2]+points_array[i,1]
-        #         depth_value = depth_map[int(plane_points[i][2][1]), int(plane_points[i][2][0])] 
-        #         plane_points[i][2][2]=depth_value
-        #         plane_points[i][2][3]=temp_plane_poins[k][0]
-        #         able3=1
-        #     if(temp_plane_poins[k][1]>0 and temp_plane_poins[k][2]<0 and able4==0):
-        #         plane_points[i][3][0]=temp_plane_poins[k][1]+points_array[i,0]
-        #         plane_points[i][3][1]=temp_plane_poins[k][2]+points_array[i,1]
-        #         depth_value = depth_map[int(plane_points[i][3][1]), int(plane_points[i][3][0])]
-        #         plane_points[i][3][2]=depth_value
-        #         plane_points[i][3][3]=temp_plane_poins[k][0]
-        #         able4=1
-        # plane_points[i].sort(key=lambda x: x[3],reverse=True)
-        plane_points[i][0] = (points_array[i][0] + 10, points_array[i][1] + 10, depth_map[int(points_array[i][1] + 10), int(points_array[i][0]+10)] )
-        plane_points[i][1] = (points_array[i][0] - 10, points_array[i][1] + 10, depth_map[int(points_array[i][1] - 10), int(points_array[i][0]+10)] )
-        plane_points[i][2] = (points_array[i][0] , points_array[i][1] - 10, depth_map[int(points_array[i][1] - 8), int(points_array[i][0])] )
+        for k in range(len(temp_plane_poins)):
+            if(temp_plane_poins[k][1]>0 and temp_plane_poins[k][2]>0 and able1==0):
+                plane_points[i][0][0]=temp_plane_poins[k][1]+points_array[i,0]
+                plane_points[i][0][1]=temp_plane_poins[k][2]+points_array[i,1]
+                depth_value = depth_map[int(plane_points[i][0][1]), int(plane_points[i][0][0])] 
+                plane_points[i][0][2]=depth_value
+                plane_points[i][0][3]=temp_plane_poins[k][0]
+                able1=1
+            if(temp_plane_poins[k][1]<0 and temp_plane_poins[k][2]>0 and able2==0):
+                plane_points[i][1][0]=temp_plane_poins[k][1]+points_array[i,0]
+                plane_points[i][1][1]=temp_plane_poins[k][2]+points_array[i,1]
+                depth_value = depth_map[int(plane_points[i][1][1]), int(plane_points[i][1][0])]
+                plane_points[i][1][2]=depth_value
+                plane_points[i][1][3]=temp_plane_poins[k][0]
+                able2=1
+            if(temp_plane_poins[k][1]<0 and temp_plane_poins[k][2]<0 and able3==0):
+                plane_points[i][2][0]=temp_plane_poins[k][1]+points_array[i,0]
+                plane_points[i][2][1]=temp_plane_poins[k][2]+points_array[i,1]
+                depth_value = depth_map[int(plane_points[i][2][1]), int(plane_points[i][2][0])] 
+                plane_points[i][2][2]=depth_value
+                plane_points[i][2][3]=temp_plane_poins[k][0]
+                able3=1
+            if(temp_plane_poins[k][1]>0 and temp_plane_poins[k][2]<0 and able4==0):
+                plane_points[i][3][0]=temp_plane_poins[k][1]+points_array[i,0]
+                plane_points[i][3][1]=temp_plane_poins[k][2]+points_array[i,1]
+                depth_value = depth_map[int(plane_points[i][3][1]), int(plane_points[i][3][0])]
+                plane_points[i][3][2]=depth_value
+                plane_points[i][3][3]=temp_plane_poins[k][0]
+                able4=1
+        plane_points[i].sort(key=lambda x: x[3],reverse=True)
+    
+        # plane_points[i][0] = (points_array[i][0] + 10, points_array[i][1] + 10, depth_map[int(points_array[i][1] + 10), int(points_array[i][0]+10)] )
+        # plane_points[i][1] = (points_array[i][0] - 10, points_array[i][1] + 10, depth_map[int(points_array[i][1] - 10), int(points_array[i][0]+10)] )
+        # plane_points[i][2] = (points_array[i][0] , points_array[i][1] - 10, depth_map[int(points_array[i][1] - 8), int(points_array[i][0])] )
 
         
         v1= [plane_points[i][1][0]-plane_points[i][0][0],-plane_points[i][1][1]+plane_points[i][0][1],-float(plane_points[i][1][2])+float(plane_points[i][0][2])]
@@ -154,10 +155,10 @@ def find_dirty_spot(img_test3,depth_map):
 
 
 
-    print("法线向量:", normal_vector_normalized)    
+    print("normal vector:", normal_vector_normalized)   
+    #this part code will draw the posture vector in 3d frame
     
 
-    # 创建一个三维图形对象
     # for i in range(len(posture)):
     #     start_point = np.array([0, 0, 0])
     #     end_point = np.array([posture[i,0], posture[i,1], posture[i,2]])
@@ -165,7 +166,7 @@ def find_dirty_spot(img_test3,depth_map):
     #     fig = plt.figure()
     #     ax = fig.add_subplot(111, projection='3d')
 
-    #     # 绘制三维向量
+
     #     ax.quiver(start_point[0], start_point[1], start_point[2],
     #             end_point[0], end_point[1], end_point[2],
     #             color='b', arrow_length_ratio=0.1)
@@ -173,19 +174,20 @@ def find_dirty_spot(img_test3,depth_map):
     #     ax.set_ylim([0, 1])
     #     ax.set_zlim([0, 1])
 
-    #     # 设置坐标轴标签
+
     #     ax.set_xlabel('X轴')
     #     ax.set_ylabel('Y轴')
     #     ax.set_zlabel('Z轴')
     #     plt.show()
  
     # print(plane_points)
+    #this part code will draw the posture vector in 3d frame
     return points_array,sum_area,posture
 
     
 #print(temp_contours)
 
-def find_real_coordinate(points_array,depth_map):
+def find_real_coordinate(points_array,depth_map):#must connect camera
     pipeline = rs.pipeline()
     config = rs.config()
     config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
@@ -193,19 +195,13 @@ def find_real_coordinate(points_array,depth_map):
 
     pipeline.start(config)
 
-    # 创建对齐对象（深度对齐颜色）
     align = rs.align(rs.stream.color)
     while True:
         frames = pipeline.wait_for_frames()
-            
-            # 获取对齐帧集
         aligned_frames = align.process(frames)
-            
-            # 获取对齐后的深度帧和彩色帧
         aligned_depth_frame = aligned_frames.get_depth_frame()
         color_frame = aligned_frames.get_color_frame()
 
-            # 获取颜色帧内参
         color_profile = color_frame.get_profile()
         cvsprofile = rs.video_stream_profile(color_profile)
         color_intrin = cvsprofile.get_intrinsics()
