@@ -30,11 +30,11 @@ class Camera(object):
         depth_to_disparity = rs.disparity_transform(True)
         disparity_to_depth = rs.disparity_transform(False)
  
-        # 创建对齐对象
+ 
         align_to = rs.stream.color                 
         align = rs.align(align_to)               
         aligned_frames = align.process(frames)
-        # 获取对齐的帧
+
         aligned_depth_frame = aligned_frames.get_depth_frame()      
         color_frame   = aligned_frames.get_color_frame()
         # left_frame  = frames.get_infrared_frame(1)
@@ -92,25 +92,25 @@ if __name__ == '__main__':
                 wr = cv2.VideoWriter(video_path, mp4, fps, (w, h), isColor=True)
                 wr_colordepth = cv2.VideoWriter(video_depthc_path, mp4, fps, (w, h), isColor=True)
                 wr_depth = h5py.File(video_depth16_path, 'w')
-                print('...录制视频中...')
+                print('...recording...')
             if flag_V == 1:
 
-                wr.write(color_image)                          # 保存RGB图像帧
-                wr_colordepth.write(colorizer_depth)           # 保存相机自身着色深度图
-                # wr_left.write(left_image)                      # 保存左帧深度图
-                # wr_right.write(right_image)                    # 保存右帧深度图
-                # res, depth16_image = cv2.imencode('.png', depthxy_image)  # 深度图解码方式一：点云小，但是出错
-                depth16_image = cv2.imencode('.png', depthxy_image)[1]      # 深度图解码方式二：文件较大，测试稳定
+                wr.write(color_image)                         
+                wr_colordepth.write(colorizer_depth)         
+                # wr_left.write(left_image)                    
+                # wr_right.write(right_image)                
+                # res, depth16_image = cv2.imencode('.png', depthxy_image) 
+                depth16_image = cv2.imencode('.png', depthxy_image)[1]   
                 depth_map_name = str(id).zfill(5) + '_depth.png'
-                # wr_depth[str(idx).zfill(5)] = depth16_image          #  储存方法：1 前3帧和没11帧出现高质量点云，其他错误
-                wr_depth[depth_map_name] = depth16_image           #  储存方法：2 所有点云准确，但是点云质量不高
+                # wr_depth[str(idx).zfill(5)] = depth16_image         
+                wr_depth[depth_map_name] = depth16_image          
                 idx += 1
                 id = id + 1
             if key & 0xFF == ord('q') or key == 27:
                 cv2.imwrite('/home/pthahnil/Desktop/realsense/1.jpg',color_image)
                 cv2.imwrite('/home/pthahnil/Desktop/realsense/1_depth.png',depthxy_image)
                 cv2.destroyAllWindows()
-                print('...录制结束/直接退出...')
+                print('...quit...')
                 break
 
     wr.release()
