@@ -29,6 +29,8 @@ class Analyse:
             pass
 
     def enhance_contrast(self, img):
+        #enhance the contrast between the stains and the background toilet
+        
         self.display(img)
         #L - Lightness/Intensity, A - Green to Purple, B - Blue to yellow
         LabImg = cv2.cvtColor(img, cv2.COLOR_BGR2Lab)
@@ -36,7 +38,7 @@ class Analyse:
 
         #Blur the Image
         blur = cv2.GaussianBlur(B, (3,3), 0)#if the dirty spot is transparent, pls change B into A
-        ret,thresh = cv2.threshold(blur,145,255,cv2.THRESH_BINARY)#second value is the treshold value that if you want the code more active pls decrease the value in opposite increase the value. Usually 140-150 is recommended 
+        ret,thresh = cv2.threshold(blur,146,255,cv2.THRESH_BINARY)#second value is the treshold value that if you want the code more active pls decrease the value in opposite increase the value. Usually 140-150 is recommended 
         self.display(thresh)
         k1 = np.ones((3,3), np.uint8)
 
@@ -49,9 +51,10 @@ class Analyse:
         return thresh
     
     def contour_ellipse(self, cnt):
+        #By expressing such contours as an ellipse, we can identify the centre and the extreme leftmost, rightmost side (axes) of the ellipse
         area = cv2.contourArea(cnt)
         ellipse = cv2.fitEllipse(cnt)
-        self.img = cv2.ellipse(self.img,ellipse,(0,255,0),2)
+        self.img = cv2.ellipse(self.img,ellipse,(0,255,0),2) #draw green elipse
         center, axes, angle = ellipse
         
         return area, center, axes, angle
@@ -59,6 +62,9 @@ class Analyse:
     def find_ellipsis_coordinates_and_depth(self) -> (float, float, float):
         
         #Determine the contours in the image
+        #By expressing such contours as an ellipse, we can identify the centre and the extreme leftmost, rightmost side (axes) of the ellipse
+        #Various points on the eclipse are recorded in points_array
+
         _, contours,_ = cv2.findContours(self.enhance_contrast(self.img), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
         sum_area=0
         points_array = []
@@ -68,7 +74,7 @@ class Analyse:
             (h, k) = center
             (a, b) = axes
 
-            #The largest **radius** of the elipsis / major axis 
+            #The distance between axes
             c = np.sqrt(abs((0.5*a)**2 - (0.5*b)**2))
             
             theta = np.radians(angle)  
@@ -99,24 +105,24 @@ class Analyse:
                 cv2.circle(self.img, (F2[0], F2[1]), 2, (255, 0, 0), -1)
                 cv2.circle(self.img, (center[0], center[1]), 2, (0, 0, 255), -1)        
 
-                cv2.drawContours(self.img,cnt,-1,(0,0,255),2)
+                cv2.drawContours(self.img,cnt,-1,(0,0,255),2) #Draw red contours
             else:
                 points_array.append(center) 
                 cv2.circle(self.img, (center[0], center[1]), 2, (0, 0, 255), -1)     
-                cv2.drawContours(self.img,cnt,-1,(0,0,255),2)
+                cv2.drawContours(self.img,cnt,-1,(0,0,255),2) #draw red contours
                 
         self.display(self.img)
         self.points_array = points_array
         return contours, points_array, sum_area
     
     def expressing_vectors(self, vectors, index):
-        #Express vectors in terms of movement in the x,y and z 
+        #Express vectors in terms of movement in the x,y and z coordinate
         
         return vectors[index,0], vectors[index,1], vectors[index,2]
 
     def normalized_vectors(self, points_array, depth_map):
        
-
+        #get the normal vector perpendicular to the centre of the stain in the toilet bowl 
         dim1 = len(points_array)
         dim2 = 4
         dim3 = 4
@@ -149,32 +155,36 @@ class Analyse:
         
         return vectors
     
-    def visualize_vectors(self, vectors):
-        
-        index = input(f"Choose from vector 0 to vector {len(vectors)-1}: ")
-        while index != "q":
-            index = int(index)
-            x, y, z = self.expressing_vectors(vectors, index)
-            start_point = np.array([0, 0, 0])
-            end_point = np.array([x, y, z])
 
-            fig = plt.figure()
-            ax = fig.add_subplot(111, projection='3d')
+    def visualize_all_vectors(self, vectors, points_array, depth_map):
+        coordinates = self.find_realxyz_coordinate(points_array, depth_map)
+        coordinate_vectors = zip(coordinates, vectors)
+        
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+
+        for coordinate, vector in coordinate_vectors:
+            vector_x, vector_y, vector_z = vector
+            x, y, z = coordinate
+
+            #simple math here to find final 3d coordinate after applying vector
+            start_point = np.array([x, y, z])
+            end_point = np.array([x+vector_x, y + vector_y, z + vector_z])
 
             ax.quiver(start_point[0], start_point[1], start_point[2],
                     end_point[0], end_point[1], end_point[2],
-                    color='b', arrow_length_ratio=0.1)
-            ax.set_xlim([0, 1])
-            ax.set_ylim([0, 1])
-            ax.set_zlim([0, 1])
+                    color='b', arrow_length_ratio=0.01)
+            
+        #set limits to the 3d graph
+        ax.set_xlim([0, 640])
+        ax.set_ylim([0, 480])
+        ax.set_zlim([0, 1000])
 
-            ax.set_xlabel('X')
-            ax.set_ylabel('Y')
-            ax.set_zlabel('Z')
-            print(index, f"x : {x}, y : {y}, z : {x}")
-            plt.show()
-            index = input(f"Choose from vector 0 to vector {len(vectors)-1}: ")
-            plt.clf()
+        ax.set_xlabel('X')
+        ax.set_ylabel('Y')
+        ax.set_zlabel('Z')
+        plt.show()
+
 
     def retrieve_offsets_and_focal_length(self):
         data = {}
@@ -184,7 +194,8 @@ class Analyse:
         return data["ppx"], data["ppy"], data["fx"], data["fy"]
 
     def find_realxyz_coordinate(self, points_array, depth_map):
-        
+        #Determine the x, y, z coordinate of each stain
+
         #ppx -  horizontal offset of that central point
         #fx - focal length which will affect the depth map...
         ppx, ppy, fx, fy = self.retrieve_offsets_and_focal_length()
@@ -219,7 +230,7 @@ class Analyse:
 if __name__ == "__main__":
     data_folder_path = "/Users/joshua/vscode/hivebotics/robot_computor_vision/realsense"
     
-    image_path = "/before.jpeg"
+    image_path = "/1.jpeg"
     depth_path = "/1_depth.png"
 
     
@@ -242,21 +253,13 @@ if __name__ == "__main__":
                 show_img=True)
     
     final_contours, final_points_array, final_sum_area = b.find_ellipsis_coordinates_and_depth()
+    if initial_sum_area != 0:
 
-    percentage_cleaned = (initial_sum_area-final_sum_area)*100/initial_sum_area
+        percentage_cleaned = (initial_sum_area-final_sum_area)*100/initial_sum_area
 
-    ic(f"{percentage_cleaned}%")
-    a.visualize_vectors(vectors)
+        ic(f"{percentage_cleaned}%")
     
+    a.visualize_all_vectors(vectors, initial_points_array, a.depth_map)
 
 
-
-    
-
-    
-
-
-    
-    
-    
     
