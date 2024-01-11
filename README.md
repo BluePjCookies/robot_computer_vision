@@ -14,7 +14,7 @@
 - self.Datatreatment returns aligned and colour data from frame
 - self.storingoffsets_and_focal_length stores horizontal, vertical offsets and focal length to a data.json file
 - self.getframedata expresses the depth and color of the frame in terms of np array
-- self.align resolution returns the aligned frame, aligned_colour_frame and aligned_depth_frame, (I replaced depthx and depthxy with aligned_depth_frame
+- self.align resolution returns the aligned frame, aligned_colour_frame and aligned_depth_frame, (I replaced depthx and depthxy with aligned_depth_frame)
 
 **test_cv.py**
 - class Analyse()
@@ -28,7 +28,7 @@
 **Test Camera functions**
 - When t is pressed, the stream can toggle to an RGB mode or a Color_depth mode.
 - When q is pressed, the data from the photo of the last frame will be stored in photo_depth.png and photo.jpg. The these can be used in test_cv to analyse the vectors etc...
-![depth_rgb_camera](https://github.com/BluePjCookies/robot_computor_vision/blob/branch4.0/screen_shot/Screen%20Recording%202024-01-11%20at%201.11.46%20PM.mov)
+![depth_rgb_camera](https://github.com/BluePjCookies/robot_computor_vision/blob/main/screen_shot/Screen%20Recording%202024-01-11%20at%201.11.46%20PM.mov)
 
 **Identifying stains**
 - red represents contours
@@ -39,7 +39,7 @@
 **What is blur_level**
 - Image below depicts the difference between the contours drawn when blur level is set to (3,3) and (5,5) respectfully. 
 - User can set blur level in self.find_ellipsis_coordinates_and_depth
-![blurlevel](https://github.com/BluePjCookies/robot_computor_vision/blob/branch4.0/screen_shot/image.png)
+![blurlevel](https://github.com/BluePjCookies/robot_computor_vision/blob/main/screen_shot/image.png)
 
 **3D view of Normalized-vectors**
 ![image](https://github.com/17688959374/robot_computor_vision/assets/128206550/09c20ca3-9fe5-4b59-907e-d0e39f632ce1)
