@@ -32,19 +32,24 @@ class Analyse:
         else:
             pass
 
-    def enhance_contrast(self, img):
+    def enhance_contrast(self, img, blur_level:tuple):
         #enhance the contrast between the stains and the background toilet
-
+        #blur level is the level of Gaussian blur applied to the image, a higher Gaussian blur would mean a less detailed contour
+        #blur level is a tuple consisting of only odd number. 
+        
         self.display(img)
         #L - Lightness/Intensity, A - Green to Purple, B - Blue to yellow
         LabImg = cv2.cvtColor(img, cv2.COLOR_BGR2Lab)
         L,A,B = cv2.split(LabImg)
 
         #Blur the Image
-        blur = cv2.GaussianBlur(B, (3,3), 0)#if the dirty spot is transparent, pls change B into A
+        #To get the most detailed contour, a value of (3, 3) for the blur_level would be recommended. (1,1) would cause errors
+
+        blur = cv2.GaussianBlur(B, blur_level, 0)#if the dirty spot is transparent, pls change B into A, add UV light too
+        self.display(blur)
         ret,thresh = cv2.threshold(blur,145,255,cv2.THRESH_BINARY)#second value is the treshold value that if you want the code more active pls decrease the value in opposite increase the value. Usually 140-150 is recommended 
         self.display(thresh)
-        k1 = np.ones((3,3), np.uint8)
+        k1 = np.ones(blur_level, np.uint8)
 
         #Remove noise from the data
         thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, k1)
@@ -63,17 +68,21 @@ class Analyse:
         
         return area, center, axes, angle
     
-    def find_ellipsis_coordinates_and_depth(self) -> (float, float, float):
+    def find_ellipsis_coordinates_and_depth(self, blur_level = (3,3)) -> (float, float, float):
         
         #Determine the contours in the image
         #By expressing such contours as an ellipse, we can identify the centre and the extreme leftmost, rightmost side (axes) of the ellipse
         #Various points on the eclipse are recorded in points_array
 
-        _, contours,_ = cv2.findContours(self.enhance_contrast(self.img), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        #Blur level is a tuple that consist of 2 odd numbered values, a lesser odd value would mean a lesser degree of blurring done to process the image.
+        #To get the most detailed contour, a value of (3, 3) for the blur_level would be recommended. (1,1) would cause errors
+        
+        _, contours,_ = cv2.findContours(self.enhance_contrast(self.img, blur_level=blur_level), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
         sum_area=0
         points_array = []
         
         for cnt in contours:
+            ic(cnt)
             area, center, axes, angle = self.contour_ellipse(cnt)
             (h, k) = center
             (a, b) = axes
@@ -245,7 +254,7 @@ if __name__ == "__main__":
     
     
 
-    initial_contours, initial_points_array, initial_sum_area = a.find_ellipsis_coordinates_and_depth()
+    initial_contours, initial_points_array, initial_sum_area = a.find_ellipsis_coordinates_and_depth(blur_level=(3,3))
 
     initial_vectors = a.normalized_vectors(initial_points_array, a.depth_map)
 

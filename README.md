@@ -20,19 +20,30 @@
 - class Analyse()
 - No changes made to the math
 - self.find_elipse_coordinate_and_depth displays contours, the points array and sum_area
-- self.normalized vector returns vectors instead of posture
+- self.normalized vector returns vectors instead of posture. It gets the vector perpendicular to the centre of the stain in the toilet bowl.
 - self.visualizevectors allows users to visualise all the vectors
 - self.retrieve offsets.. retrieve data from data.json file
-Changes were only made to the code. The outputs for my code is the same as yours
+- self.find_ellipsis_coordinates_and_depth has a variable blur_level. Set it according to the level of precision of contours generated you want. Blur level must be a tuple consisting of two odd value and cannot be set as (1,1). Eg. (3,3)...
 
-**3D view of Normalized-vectors**
-![image](https://github.com/17688959374/robot_computor_vision/assets/128206550/09c20ca3-9fe5-4b59-907e-d0e39f632ce1)
+**Test Camera functions**
+- When t is pressed, the stream can toggle to an RGB mode or a Color_depth mode.
+- When q is pressed, the data from the photo of the last frame will be stored in photo_depth.png and photo.jpg. The these can be used in test_cv to analyse the vectors etc...
+![depth_rgb_camera](robot_computor_vision/screen_shot/Screen Recording 2024-01-11 at 1.11.46 PM.mov)
 
 **Identifying stains**
 - red represents contours
 - green represent ellipse
 - blue dots are coordinates that would be taken down in the points_array. They are points on the ellipse that are of the furthest distance from one another, known as axes..
 ![image](https://github.com/17688959374/robot_computor_vision/assets/128206550/0208efd7-6b04-4539-b47d-8d090d90770d)
+
+**What is blur_level**
+- Image below depicts the difference between the contours drawn when blur level is set to (3,3) and (5,5) respectfully. 
+- User can set blur level in self.find_ellipsis_coordinates_and_depth
+![blurlevel](robot_computor_vision/screen_shot/image.png)
+
+**3D view of Normalized-vectors**
+![image](https://github.com/17688959374/robot_computor_vision/assets/128206550/09c20ca3-9fe5-4b59-907e-d0e39f632ce1)
+
 
 ### What does this updated code eliminate?
 
