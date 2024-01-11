@@ -39,7 +39,7 @@
 **What is blur_level**
 - Image below depicts the difference between the contours drawn when blur level is set to (3,3) and (5,5) respectfully. 
 - User can set blur level in self.find_ellipsis_coordinates_and_depth
-![blurlevel](robot_computor_vision/screen_shot/image.png)
+![blurlevel](/robot_computor_vision/screen_shot/image.png)
 
 **3D view of Normalized-vectors**
 ![image](https://github.com/17688959374/robot_computor_vision/assets/128206550/09c20ca3-9fe5-4b59-907e-d0e39f632ce1)
