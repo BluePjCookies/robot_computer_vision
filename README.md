@@ -7,6 +7,15 @@
 - Data.json file to host offsets and focal length
 - Photo.jpeg and Photo_depth.png for testing purposes
 
+**main**
+- There are various modes. Mode 1 will request the user to take a photo of the perfectly clean toilet, 2 for the toilet before cleaning and 3 for the toilet after cleaning
+- It will ask the user to input which mode they are going to take a photo for.
+- After the user selected a photo for all three modes, it will save these photos and depth data into 6 data files.
+- The 6 files are 3 images and depth, consisting of the perfectly clean toilet, toilet before cleaning, and toilet after cleaning
+- The program will compare the area of stains between before and after, to find out how many percentage of stains had been cleaned. 
+- It was also compare the area of stains between perfect and after to find out how many percentage of stains needs to be removed. 
+
+
 **test_camera.py**
 - class Camera()
 - Stores all file path in self.storingfilepath
@@ -43,7 +52,6 @@
 
 **3D view of Normalized-vectors**
 ![video](https://github.com/BluePjCookies/robot_computer_vision/blob/main/screen_shot/3dvector.mov)
-
 
 ### What does this updated code eliminate?
 
