@@ -1,9 +1,9 @@
-
+### Allow for Modularity
 **Short breakdown of the code**
 - test_camera controls camera to take RGB data (Colour intrinsics...), DEPTH data ... and stores these data into a RealSense folder
 - test_cv retrieves data from RealSense folder, determine the x, y, z coordinates of stains based on the data test_camera had collected
 ### Changes
-## Allow for Modularity
+
 **REAL SENSE FOLDER**
 - Data.json file to host offsets and focal length
 - Photo.jpeg and Photo_depth.png for testing purposes
