@@ -241,7 +241,7 @@ class Analyse:
     
     
 if __name__ == "__main__":
-    data_folder_path = "/Users/joshua/vscode/hivebotics/robot_computor_vision/realsense"
+    data_folder_path = "/Users/joshua/vscode/hivebotics/robot_computer_vision/realsense"
     
     image_path = "/before.jpeg"
     depth_path = "/1_depth.png"

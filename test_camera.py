@@ -206,7 +206,7 @@ class Camera():
 
 if __name__ == "__main__":
 
-    c = Camera(video_folder="/Users/joshua/vscode/hivebotics/robot_computor_vision/realsense")
+    c = Camera(video_folder="/Users/joshua/vscode/hivebotics/robot_computer_vision/realsense")
     
     c.recording()
 
