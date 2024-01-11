@@ -100,12 +100,17 @@ class Camera():
 
     
     def storingfilepath(self):
-        
+        #Stores the RGB video here
         video_path = self.video_folder + "/targetvideo_rgb.mp4"
+        #Stores the Color&depth video here
         video_depthcolor_path = self.video_folder + "/targetvideo_depthcolor.mp4"
+        #stores the video_depth data here
         video_depth16_path = self.video_folder + "/targetvideo_depth.h5"
+        #stores the last frame of the video here
         photo_path = self.video_folder + "/photo.jpg"
+        #stores the depth_data from the last frame of the video here
         photo_depth_path = self.video_folder + "/photo_depth.png"
+        #stores the x,y,z offsets here
         json_file_path = self.video_folder + "/data.json"
 
         return video_path, video_depthcolor_path, video_depth16_path, photo_path, photo_depth_path, json_file_path

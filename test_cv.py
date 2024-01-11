@@ -6,7 +6,11 @@ from icecream import ic
 import json
 
 class Analyse:
-    def __init__(self, data_folder:str, img:str, depth_map:str, show_img=False):
+    def __init__(self, width=640, height=480, fps=30, data_folder = None, img = None, depth_map = None, show_img=False):
+        self.width = width
+        self.height = height
+        self.fps = fps
+        
         img = data_folder + img
         depth_map = data_folder + depth_map
         
@@ -38,7 +42,7 @@ class Analyse:
 
         #Blur the Image
         blur = cv2.GaussianBlur(B, (3,3), 0)#if the dirty spot is transparent, pls change B into A
-        ret,thresh = cv2.threshold(blur,146,255,cv2.THRESH_BINARY)#second value is the treshold value that if you want the code more active pls decrease the value in opposite increase the value. Usually 140-150 is recommended 
+        ret,thresh = cv2.threshold(blur,145,255,cv2.THRESH_BINARY)#second value is the treshold value that if you want the code more active pls decrease the value in opposite increase the value. Usually 140-150 is recommended 
         self.display(thresh)
         k1 = np.ones((3,3), np.uint8)
 
@@ -124,8 +128,8 @@ class Analyse:
        
         #get the normal vector perpendicular to the centre of the stain in the toilet bowl 
         dim1 = len(points_array)
-        dim2 = 4
-        dim3 = 4
+        dim2 = 3
+        dim3 = 3
         plane_points = [[[0 for _ in range(dim3)] for _ in range(dim2)] for _ in range(dim1)]
 
         #giving each points a vector in terms of x, y, z
@@ -144,9 +148,9 @@ class Analyse:
 
             
             v1= [plane_points[i][1][0]-plane_points[i][0][0],-plane_points[i][1][1]+plane_points[i][0][1],-float(plane_points[i][1][2])+float(plane_points[i][0][2])]
-
+            
             v2= [plane_points[i][2][0]-plane_points[i][0][0],-plane_points[i][2][1]+plane_points[i][0][1],-float(plane_points[i][2][2]) + float(plane_points[i][0][2])]
-    
+
             #cross product of two vectors to determine the normal vector of v1 and v2
             normal_vector = np.cross(v1, v2)
             normal_vector_normalized = normal_vector / np.linalg.norm(normal_vector)
@@ -176,8 +180,8 @@ class Analyse:
                     color='b', arrow_length_ratio=0.01)
             
         #set limits to the 3d graph
-        ax.set_xlim([0, 640])
-        ax.set_ylim([0, 480])
+        ax.set_xlim([0, self.width])
+        ax.set_ylim([0, self.height])
         ax.set_zlim([0, 1000])
 
         ax.set_xlabel('X')
@@ -260,7 +264,7 @@ if __name__ == "__main__":
     ic(final_vectors)
 
     b.visualize_all_vectors(final_vectors, final_points_array, b.depth_map)
-    
+
     if initial_sum_area != 0:
 
         percentage_cleaned = (initial_sum_area-final_sum_area)*100/initial_sum_area
