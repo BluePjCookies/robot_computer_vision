@@ -1,13 +1,14 @@
-### Allow for Modularity
+
 **Short breakdown of the code**
 - test_camera controls camera to take RGB data (Colour intrinsics...), DEPTH data ... and stores these data into a RealSense folder
 - test_cv retrieves data from RealSense folder, determine the x, y, z coordinates of stains based on the data test_camera had collected
 ### Changes
+### Allow for Modularity
 **REAL SENSE FOLDER**
 - Data.json file to host offsets and focal length
 - Photo.jpeg and Photo_depth.png for testing purposes
 
-**main**
+**main.py**
 - There are various modes. Mode 1 will request the user to take a photo of the perfectly clean toilet, 2 for the toilet before cleaning and 3 for the toilet after cleaning
 - It will ask the user to input which mode they are going to take a photo for.
 - After the user selected a photo for all three modes, it will save these photos and depth data into 6 data files.
