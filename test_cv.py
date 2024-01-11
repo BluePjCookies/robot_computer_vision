@@ -11,9 +11,6 @@ class Analyse:
         self.height = height
         self.fps = fps
         
-        img = data_folder + img
-        depth_map = data_folder + depth_map
-        
         
         self.img = cv2.resize(cv2.imread(img), (640, 480), fx=0, fy=0, interpolation=cv2.INTER_AREA)
 
@@ -82,7 +79,7 @@ class Analyse:
         points_array = []
         
         for cnt in contours:
-            ic(cnt)
+        
             area, center, axes, angle = self.contour_ellipse(cnt)
             (h, k) = center
             (a, b) = axes
@@ -243,8 +240,8 @@ class Analyse:
 if __name__ == "__main__":
     data_folder_path = "/Users/joshua/vscode/hivebotics/robot_computer_vision/realsense"
     
-    image_path = "/before.jpeg"
-    depth_path = "/1_depth.png"
+    image_path = data_folder_path + "/before.jpeg"
+    depth_path = data_folder_path + "/1_depth.png"
 
     
     a = Analyse(data_folder=data_folder_path,
@@ -262,7 +259,7 @@ if __name__ == "__main__":
     a.visualize_all_vectors(initial_vectors, initial_points_array, a.depth_map)
 
     b = Analyse(data_folder=data_folder_path,
-                img = "/after.jpeg",
+                img = data_folder_path + "/after.jpeg",
                 depth_map=depth_path,
                 show_img=True)
     

@@ -16,6 +16,8 @@ class Camera():
         self.pipeline = rs.pipeline()
         self.config = rs.config()
         self.video_folder = video_folder
+
+        
         
         self.config.enable_stream(rs.stream.color, self.width, self.height, rs.format.bgr8, fps)
         self.config.enable_stream(rs.stream.depth, self.width, self.height, rs.format.z16,  fps)
@@ -23,7 +25,7 @@ class Camera():
         
         # self.config.enable_stream(rs.stream.infrared, 1, self.width, self.height, rs.format.y8, fps)
         # self.config.enable_stream(rs.stream.infrared, 2, self.width, self.height, rs.format.y8, fps)
-        self.pipeline.start(self.config)    
+        self.pipeline.start(self.config)
 
     def getframe(self):
         # Get the frames from external realsense camera
@@ -50,8 +52,8 @@ class Camera():
 
         return aligned_frame, aligned_depth_frame, aligned_color_frame 
     
-    def storing_offsets_and_focal_length(self, frame):
-        _, _, _, _, _, json_file_path = self.storingfilepath()
+    def storing_offsets_and_focal_length(self, frame, mode):
+        _, _, _, _, _, json_file_path = self.storingfilepath(mode)
         _, _, aligned_color_frame  = self.alignresolution(frame)
 
         #Retrieve the internal parameters of the coloured frame
@@ -99,7 +101,9 @@ class Camera():
         self.pipeline.stop()
 
     
-    def storingfilepath(self):
+    def storingfilepath(self, mode):
+
+        classify_modes = {1:"_perfect", 2:"_before", 3:"_after"}
         #Stores the RGB video here
         video_path = self.video_folder + "/targetvideo_rgb.mp4"
         #Stores the Color&depth video here
@@ -107,17 +111,17 @@ class Camera():
         #stores the video_depth data here
         video_depth16_path = self.video_folder + "/targetvideo_depth.h5"
         #stores the last frame of the video here
-        photo_path = self.video_folder + "/photo.jpg"
+        photo_path = self.video_folder + f"/photo{classify_modes[mode]}.jpg"
         #stores the depth_data from the last frame of the video here
-        photo_depth_path = self.video_folder + "/photo_depth.png"
+        photo_depth_path = self.video_folder + f"/photo_depth{classify_modes[mode]}.png"
         #stores the x,y,z offsets here
         json_file_path = self.video_folder + "/data.json"
 
         return video_path, video_depthcolor_path, video_depth16_path, photo_path, photo_depth_path, json_file_path
 
-    def initialise_recording_function(self):
+    def initialise_recording_function(self, mode):
 
-        video_path, video_depthcolor_path, video_depth16_path, _, _, _= self.storingfilepath()
+        video_path, video_depthcolor_path, video_depth16_path, _, _, _= self.storingfilepath(mode=mode)
         
         mp4 = cv2.VideoWriter_fourcc(*'mp4v') 
 
@@ -127,15 +131,23 @@ class Camera():
         wr_depth = h5py.File(video_depth16_path, 'w')
 
         return wr, wr_colordepth, wr_depth
-
-    def recording(self):
+    def handling_exception(self, mode):
+       #1 - Perfectly clean toilet, 2 - Dirty Toilet, 3 - Toilet after cleaning
+        if isinstance(mode, int) is False:
+            raise Exception("Input an integer value for mode")
+        if mode > 3 and mode < 1:
+            raise Exception("There are only three modes")
         if self.video_folder is None:
             raise Exception("Please input in your video folder /Usr.../folder")
+
+    def recording(self, mode:int):
+
+        self.handling_exception(mode)
         
         print("Press s to record, t to toggle and q to quit")
 
         #Retrieve all the file Path
-        video_path, _, _, photo_path, photo_depth_path, _ = self.storingfilepath()
+        video_path, _, _, photo_path, photo_depth_path, _ = self.storingfilepath(mode=mode)
 
         idx = 0
         
@@ -160,7 +172,7 @@ class Camera():
                 self.isrecording = True
                 
                 #Initialising different recording functions.
-                wr, wr_colordepth, wr_depth = self.initialise_recording_function()
+                wr, wr_colordepth, wr_depth = self.initialise_recording_function(mode=mode)
 
                 print('...recording...')
 
@@ -194,7 +206,7 @@ class Camera():
                 cv2.destroyAllWindows()
                 print('...quit...')
                 
-                self.storing_offsets_and_focal_length(frame) #storing the focal length for one frame. to be used in test_cv
+                self.storing_offsets_and_focal_length(frame, mode) #storing the focal length for one frame. to be used in test_cv
 
                 break
             
@@ -208,6 +220,6 @@ if __name__ == "__main__":
 
     c = Camera(video_folder="/Users/joshua/vscode/hivebotics/robot_computer_vision/realsense")
     
-    c.recording()
+    c.recording(mode=2)
 
    
