@@ -42,7 +42,7 @@
 ![blurlevel](https://github.com/BluePjCookies/robot_computor_vision/blob/main/screen_shot/image.png)
 
 **3D view of Normalized-vectors**
-![image](https://github.com/17688959374/robot_computor_vision/assets/128206550/09c20ca3-9fe5-4b59-907e-d0e39f632ce1)
+![video](https://github.com/BluePjCookies/robot_computer_vision/blob/main/screen_shot/3dvector.mov)
 
 
 ### What does this updated code eliminate?
