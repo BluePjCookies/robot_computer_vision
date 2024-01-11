@@ -30,7 +30,7 @@ class Analyse:
 
     def enhance_contrast(self, img):
         #enhance the contrast between the stains and the background toilet
-        
+
         self.display(img)
         #L - Lightness/Intensity, A - Green to Purple, B - Blue to yellow
         LabImg = cv2.cvtColor(img, cv2.COLOR_BGR2Lab)
@@ -230,7 +230,7 @@ class Analyse:
 if __name__ == "__main__":
     data_folder_path = "/Users/joshua/vscode/hivebotics/robot_computor_vision/realsense"
     
-    image_path = "/1.jpeg"
+    image_path = "/before.jpeg"
     depth_path = "/1_depth.png"
 
     
@@ -243,9 +243,10 @@ if __name__ == "__main__":
 
     initial_contours, initial_points_array, initial_sum_area = a.find_ellipsis_coordinates_and_depth()
 
-    vectors = a.normalized_vectors(initial_points_array, a.depth_map)
+    initial_vectors = a.normalized_vectors(initial_points_array, a.depth_map)
 
-    ic(vectors)
+    ic(initial_vectors)
+    a.visualize_all_vectors(initial_vectors, initial_points_array, a.depth_map)
 
     b = Analyse(data_folder=data_folder_path,
                 img = "/after.jpeg",
@@ -253,13 +254,21 @@ if __name__ == "__main__":
                 show_img=True)
     
     final_contours, final_points_array, final_sum_area = b.find_ellipsis_coordinates_and_depth()
+
+    final_vectors = b.normalized_vectors(final_points_array, b.depth_map)
+    
+    ic(final_vectors)
+
+    b.visualize_all_vectors(final_vectors, final_points_array, b.depth_map)
+    
     if initial_sum_area != 0:
 
         percentage_cleaned = (initial_sum_area-final_sum_area)*100/initial_sum_area
 
         ic(f"{percentage_cleaned}%")
     
-    a.visualize_all_vectors(vectors, initial_points_array, a.depth_map)
+    
+    
 
 
     

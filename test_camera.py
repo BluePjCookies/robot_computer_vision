@@ -112,7 +112,7 @@ class Camera():
 
     def initialise_recording_function(self):
 
-        video_path, video_depthcolor_path, video_depth16_path, _, _= self.storingfilepath()
+        video_path, video_depthcolor_path, video_depth16_path, _, _, _= self.storingfilepath()
         
         mp4 = cv2.VideoWriter_fourcc(*'mp4v') 
 
