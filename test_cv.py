@@ -241,8 +241,8 @@ class Analyse:
 if __name__ == "__main__":
     data_folder_path = "/Users/joshua/vscode/hivebotics/robot_computer_vision/realsense"
     
-    image_path = data_folder_path + "/photo_before.jpeg"
-    depth_path = data_folder_path + "/photo_depth_before.png"
+    image_path = data_folder_path + "/before.jpeg"
+    depth_path = data_folder_path + "/1_depth.png"
 
     
     a = Analyse(data_folder=data_folder_path,
@@ -260,8 +260,8 @@ if __name__ == "__main__":
     a.visualize_all_vectors(initial_vectors, initial_points_array, a.depth_map)
 
     b = Analyse(data_folder=data_folder_path,
-                img = data_folder_path + "/photo_after.jpeg",
-                depth_map=data_folder_path + "/photo_depth_after.png",
+                img = data_folder_path + "/after.jpeg",
+                depth_map=data_folder_path + "/1_depth.png",
                 show_img=True)
     
     final_contours, final_points_array, final_sum_area = b.find_ellipsis_coordinates_and_depth()

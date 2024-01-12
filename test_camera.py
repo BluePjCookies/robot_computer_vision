@@ -6,7 +6,7 @@ import json
 from icecream import ic
 
 class Camera():
-    def __init__(self, width=640, height=480, fps=30, ColorAndDepth = False, video_folder = None):
+    def __init__(self, width=640, height=480, fps=30, ColorAndDepth = False, data_folder = None):
         
         self.width = width
         self.height = height
@@ -15,17 +15,19 @@ class Camera():
         self.ColorAndDepth = ColorAndDepth
         self.pipeline = rs.pipeline()
         self.config = rs.config()
-        self.video_folder = video_folder
+        self.data_folder = data_folder
 
         
         
         self.config.enable_stream(rs.stream.color, self.width, self.height, rs.format.bgr8, fps)
         self.config.enable_stream(rs.stream.depth, self.width, self.height, rs.format.z16,  fps)
-        self.video_folder = video_folder
+        self.data_folder = data_folder
         
         # self.config.enable_stream(rs.stream.infrared, 1, self.width, self.height, rs.format.y8, fps)
         # self.config.enable_stream(rs.stream.infrared, 2, self.width, self.height, rs.format.y8, fps)
         self.pipeline.start(self.config)
+
+        
 
     def getframe(self):
         # Get the frames from external realsense camera
@@ -105,29 +107,20 @@ class Camera():
 
         classify_modes = {1:"_perfect", 2:"_before", 3:"_after"}
         #Stores the RGB video here
-        video_path = self.video_folder + "/targetvideo_rgb.mp4"
+        video_path = self.data_folder + "/targetvideo_rgb.mp4"
         #Stores the Color&depth video here
-        video_depthcolor_path = self.video_folder + "/targetvideo_depthcolor.mp4"
+        video_depthcolor_path = self.data_folder + "/targetvideo_depthcolor.mp4"
         #stores the video_depth data here
-        video_depth16_path = self.video_folder + "/targetvideo_depth.h5"
+        video_depth16_path = self.data_folder + "/targetvideo_depth.h5"
         #stores the last frame of the video here
-        photo_path = self.video_folder + f"/photo{classify_modes[mode]}.jpeg"
+        photo_path = self.data_folder + f"/photo{classify_modes[mode]}.jpeg"
         #stores the depth_data from the last frame of the video here
-        photo_depth_path = self.video_folder + f"/photo_depth{classify_modes[mode]}.png"
+        photo_depth_path = self.data_folder + f"/photo_depth{classify_modes[mode]}.png"
         #stores the x,y,z offsets here
-        json_file_path = self.video_folder + "/data.json"
+        json_file_path = self.data_folder + "/data.json"
 
         return video_path, video_depthcolor_path, video_depth16_path, photo_path, photo_depth_path, json_file_path
     
-    def return_all_modes_path(self):
-        #return all the file path for the different modes
-        _, _, _, photo_path_perfect, photo_depth_path_perfect, _ = self.storingfilepath(mode=1)
-
-        _, _, _, photo_path_before, photo_depth_path_before, _ = self.storingfilepath(mode=2)
-
-        _, _, _, photo_path_after, photo_depth_path_after, _ = self.storingfilepath(mode=3)
-
-        return photo_path_perfect, photo_depth_path_perfect, photo_path_before, photo_depth_path_before, photo_path_after, photo_depth_path_after
 
     def initialise_recording_function(self, mode):
 
@@ -147,7 +140,7 @@ class Camera():
             raise Exception("Input an integer value for mode")
         if mode > 3 and mode < 1:
             raise Exception("There are only three modes")
-        if self.video_folder is None:
+        if self.data_folder is None:
             raise Exception("Please input in your video folder /Usr.../folder")
 
     def recording(self, mode:int):
@@ -228,8 +221,8 @@ class Camera():
 
 if __name__ == "__main__":
 
-    c = Camera(video_folder="/Users/joshua/vscode/hivebotics/robot_computer_vision/realsense")
+    c = Camera(data_folder="/Users/joshua/vscode/hivebotics/robot_computer_vision/data")
     
-    c.recording(mode=1)
+    c.recording(mode=3)
 
    
