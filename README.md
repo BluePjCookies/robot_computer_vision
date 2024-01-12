@@ -30,7 +30,7 @@
 **test_camera.py**
 - class Camera()
 - Set the mode here, self.recording(mode=int..)
-- You can press s to take a video, press t to toggle and q to quit. Once q is pressed, the camera will record the data from the last frame and write the two files.
+- You can press s to take a video, press t to toggle between RGB and depth, and q to quit. Once q is pressed, the camera will record the data from the last frame and write the two files.
 - After the user set the images and depth data for these 3 modes, there should be 7 data files in the data folder. (plus data.json)
 - All path are stored at self.storingfilepath()
 - self.Datatreatment returns all the colour and depth data from the frame
