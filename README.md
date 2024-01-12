@@ -1,36 +1,38 @@
 ### Allow for Modularity
 **Short breakdown of the code**
-- test_camera controls camera to take RGB data (Colour intrinsics...), DEPTH data ... and stores these data into a RealSense folder
-- test_cv retrieves data from RealSense folder, determine the x, y, z coordinates of stains based on the data test_camera had collected
+- test_camera controls camera to take RGB data (Colour intrinsics...), DEPTH data ... and stores these data into a data folder
+- test_cv retrieves data from data folder, determine the x, y, z coordinates of stains based on the data test_camera had collected
 ### Changes
 
 **REAL SENSE FOLDER**
 - Data.json file to host offsets and focal length
-- Photo.jpeg and Photo_depth.png for testing purposes
+- Photo_depth_perfect/_before/_after .png
+- photo_perfect/_before/_after .jpeg
 
 **main.py**
-- There are various modes. Mode 1 will request the user to take a photo of the perfectly clean toilet, 2 for the toilet before cleaning and 3 for the toilet after cleaning
-- It will ask the user to input which mode they are going to take a photo for.
-- After the user selected a photo for all three modes, it will save these photos and depth data into 6 data files.
-- The 6 files are 3 images and depth, consisting of the perfectly clean toilet, toilet before cleaning, and toilet after cleaning
+- class Comparison requires the repository file path to initialise. Input in "../usr/.../robot_computer_vision" as the repository file path. 
+- The program will look through the files in the data folder. It will retrieve the file path data after all 3 modes had been collected. You can set whether you want the file path to be default or not if you dont have an actual photo of a toilet.
 - The program will compare the area of stains between before and after, to find out how many percentage of stains had been cleaned. 
 - It was also compare the area of stains between perfect and after to find out how many percentage of stains needs to be removed. 
 
 
 **test_camera.py**
 - class Camera()
+- There are 3 modes. Mode 1 will request the user to take a photo of the perfectly clean toilet, 2 for the toilet before cleaning and 3 for the toilet after cleaning. Select mode in c.recording(mode=int..)
+- After the user set the images and depth data for these 3 modes, there should be 6 data files in the data folder.
+- The 6 files are 3 images and depth, consisting of the perfectly clean toilet, toilet before cleaning, and toilet after cleaning
 - Stores all file path in self.storingfilepath
 - self.recording records, added functionality - press t to toggle between RGB and Colourdepth
 - self.Datatreatment returns aligned and colour data from frame
 - self.storingoffsets_and_focal_length stores horizontal, vertical offsets and focal length to a data.json file
 - self.getframedata expresses the depth and color of the frame in terms of np array
-- self.align resolution returns the aligned frame, aligned_colour_frame and aligned_depth_frame, (I replaced depthx and depthxy with aligned_depth_frame)
+- self.align resolution returns the aligned frame, aligned_colour_frame and aligned_depth_frame. It aligns the resolution of the depth and rgb camera.
 
 **test_cv.py**
 - class Analyse()
 - No changes made to the math
 - self.find_elipse_coordinate_and_depth displays contours, the points array and sum_area
-- self.normalized vector returns vectors instead of posture. It gets the vector perpendicular to the centre of the stain in the toilet bowl.
+- self.normalized vector returns vectors, which is how the robot arm will tilt to aim at the stain spot. It gets the vector perpendicular to the centre of the stain in the toilet bowl.
 - self.visualizevectors allows users to visualise all the vectors
 - self.retrieve offsets.. retrieve data from data.json file
 - self.find_ellipsis_coordinates_and_depth has a variable blur_level. Set it according to the level of precision of contours generated you want. Blur level must be a tuple consisting of two odd value and cannot be set as (1,1). Eg. (3,3)...
