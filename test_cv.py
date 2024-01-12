@@ -143,11 +143,12 @@ class Analyse:
         
 
         #number of contour,number of points in the contour,0,x/y
-
+        
         for i in range(len(points_array)):
 
             x = points_array[i][0]
             y = points_array[i][1]
+            
             plane_points[i][0] = (x + 10, y + 10, depth_map[int(y + 10), int(x+10)] )
             plane_points[i][1] = (x - 10, y + 10, depth_map[int(y - 10), int(x+10)] )
             plane_points[i][2] = (x , y - 10, depth_map[int(y - 8), int(x)] )
@@ -240,8 +241,8 @@ class Analyse:
 if __name__ == "__main__":
     data_folder_path = "/Users/joshua/vscode/hivebotics/robot_computer_vision/realsense"
     
-    image_path = data_folder_path + "/before.jpeg"
-    depth_path = data_folder_path + "/1_depth.png"
+    image_path = data_folder_path + "/photo_before.jpeg"
+    depth_path = data_folder_path + "/photo_depth_before.png"
 
     
     a = Analyse(data_folder=data_folder_path,
@@ -259,8 +260,8 @@ if __name__ == "__main__":
     a.visualize_all_vectors(initial_vectors, initial_points_array, a.depth_map)
 
     b = Analyse(data_folder=data_folder_path,
-                img = data_folder_path + "/after.jpeg",
-                depth_map=depth_path,
+                img = data_folder_path + "/photo_after.jpeg",
+                depth_map=data_folder_path + "/photo_depth_after.png",
                 show_img=True)
     
     final_contours, final_points_array, final_sum_area = b.find_ellipsis_coordinates_and_depth()

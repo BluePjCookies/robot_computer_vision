@@ -111,7 +111,7 @@ class Camera():
         #stores the video_depth data here
         video_depth16_path = self.video_folder + "/targetvideo_depth.h5"
         #stores the last frame of the video here
-        photo_path = self.video_folder + f"/photo{classify_modes[mode]}.jpg"
+        photo_path = self.video_folder + f"/photo{classify_modes[mode]}.jpeg"
         #stores the depth_data from the last frame of the video here
         photo_depth_path = self.video_folder + f"/photo_depth{classify_modes[mode]}.png"
         #stores the x,y,z offsets here
@@ -230,6 +230,6 @@ if __name__ == "__main__":
 
     c = Camera(video_folder="/Users/joshua/vscode/hivebotics/robot_computer_vision/realsense")
     
-    c.recording(mode=2)
+    c.recording(mode=1)
 
    

@@ -22,7 +22,7 @@ else:
     photo_path_perfect, photo_depth_path_perfect,photo_path_before, photo_depth_path_before,photo_path_after, photo_depth_path_after= c.return_all_modes_path()
 
     #reset the images in photopath to the default images, until we get actual images of toilets
-    reset_to_default_image(video_folder, photo_path_perfect, photo_path_before, photo_path_after)
+    #reset_to_default_image(video_folder, photo_path_perfect, photo_path_before, photo_path_after)
 
     data_folder = c.video_folder
 
@@ -43,9 +43,12 @@ else:
     perfect_contours, perfect_points_array, perfect_sum_area = perfect.find_ellipsis_coordinates_and_depth()
     before_contours, before_points_array, before_sum_area = before.find_ellipsis_coordinates_and_depth()
     after_contours, after_points_array, after_sum_area = after.find_ellipsis_coordinates_and_depth()
-
-    percentage_cleaned = (before_sum_area-after_sum_area)*100/before_sum_area
-    print(f"Stain removed from before to after: {percentage_cleaned}%")
+    
+    if before_sum_area != 0:
+        percentage_cleaned = (before_sum_area-after_sum_area)*100/before_sum_area
+        print(f"Stain removed from before to after: {percentage_cleaned}%")
+    else:
+        print("Percentage of stains removed is 0%. There were no stains to be removed.")
     if after_sum_area != 0:
         percentage_to_be_cleaned = (after_sum_area-perfect_sum_area)*100/after_sum_area
         print(f"Percentage of stains to be removed to be perfect: {percentage_to_be_cleaned}%")
