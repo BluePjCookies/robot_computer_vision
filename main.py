@@ -2,10 +2,10 @@ from test_camera import Camera
 from test_cv import Analyse
 import cv2
 
-def reset_to_default_image(photo_path_perfect, photo_path_before, photo_path_after):
-    image_after = cv2.imread(f"{video_folder}/after.jpeg")
-    image_perfect = cv2.imread(f"{video_folder}/after1.jpeg")
-    image_before = cv2.imread(f"{video_folder}/before.jpeg")
+def reset_to_default_image(video_folder, photo_path_perfect, photo_path_before, photo_path_after):
+    image_after = cv2.imread(f"{video_folder}/after.jpeg") #after
+    image_perfect = cv2.imread(f"{video_folder}/after1.jpeg") #perfect
+    image_before = cv2.imread(f"{video_folder}/before.jpeg") #before
 
     cv2.imwrite(photo_path_perfect, image_perfect)
     cv2.imwrite(photo_path_after, image_after)
@@ -22,7 +22,7 @@ else:
     photo_path_perfect, photo_depth_path_perfect,photo_path_before, photo_depth_path_before,photo_path_after, photo_depth_path_after= c.return_all_modes_path()
 
     #reset the images in photopath to the default images, until we get actual images of toilets
-    reset_to_default_image(photo_path_perfect, photo_path_before, photo_path_after)
+    reset_to_default_image(video_folder, photo_path_perfect, photo_path_before, photo_path_after)
 
     data_folder = c.video_folder
 
