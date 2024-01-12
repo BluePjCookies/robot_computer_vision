@@ -2,6 +2,15 @@ from test_camera import Camera
 from test_cv import Analyse
 import cv2
 
+def reset_to_default_image(photo_path_perfect, photo_path_before, photo_path_after):
+    image_after = cv2.imread(f"{video_folder}/after.jpeg")
+    image_perfect = cv2.imread(f"{video_folder}/after1.jpeg")
+    image_before = cv2.imread(f"{video_folder}/before.jpeg")
+
+    cv2.imwrite(photo_path_perfect, image_perfect)
+    cv2.imwrite(photo_path_after, image_after)
+    cv2.imwrite(photo_path_before, image_before)
+
 video_folder = "/Users/joshua/vscode/hivebotics/robot_computer_vision/realsense"
 c = Camera(video_folder= video_folder)
 
@@ -9,19 +18,12 @@ mode = input("mode: ")
 if mode.isnumeric():
     c.recording(mode=int(mode))
 else:
-    image_after = cv2.imread(f"{video_folder}/after.jpeg")
-    image_perfect = cv2.imread(f"{video_folder}/after1.jpeg")
-    image_before = cv2.imread(f"{video_folder}/before.jpeg")
-    
-    _, _, _, photo_path_perfect, photo_depth_path_perfect, _ = c.storingfilepath(mode=1)
+    #retrieve all the file paths
+    photo_path_perfect, photo_depth_path_perfect,photo_path_before, photo_depth_path_before,photo_path_after, photo_depth_path_after= c.return_all_modes_path()
 
-    _, _, _, photo_path_before, photo_depth_path_before, _ = c.storingfilepath(mode=2)
+    #reset the images in photopath to the default images, until we get actual images of toilets
+    reset_to_default_image(photo_path_perfect, photo_path_before, photo_path_after)
 
-    _, _, _, photo_path_after, photo_depth_path_after, _ = c.storingfilepath(mode=3)
-
-    cv2.imwrite(photo_path_perfect, image_perfect)
-    cv2.imwrite(photo_path_after, image_after)
-    cv2.imwrite(photo_path_before, image_before)
     data_folder = c.video_folder
 
     perfect = Analyse(data_folder=data_folder,

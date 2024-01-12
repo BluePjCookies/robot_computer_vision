@@ -118,6 +118,16 @@ class Camera():
         json_file_path = self.video_folder + "/data.json"
 
         return video_path, video_depthcolor_path, video_depth16_path, photo_path, photo_depth_path, json_file_path
+    
+    def return_all_modes_path(self):
+        #return all the file path for the different modes
+        _, _, _, photo_path_perfect, photo_depth_path_perfect, _ = self.storingfilepath(mode=1)
+
+        _, _, _, photo_path_before, photo_depth_path_before, _ = self.storingfilepath(mode=2)
+
+        _, _, _, photo_path_after, photo_depth_path_after, _ = self.storingfilepath(mode=3)
+
+        return photo_path_perfect, photo_depth_path_perfect, photo_path_before, photo_depth_path_before, photo_path_after, photo_depth_path_after
 
     def initialise_recording_function(self, mode):
 
