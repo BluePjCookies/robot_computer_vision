@@ -239,7 +239,7 @@ class Analyse:
     
     
 if __name__ == "__main__":
-    data_folder_path = "/Users/joshua/vscode/hivebotics/robot_computer_vision/realsense"
+    data_folder_path = "/Users/Joshua/Vscode/Python/robot_computer_vision/realsense"
     
     image_path = data_folder_path + "/before.jpeg"
     depth_path = data_folder_path + "/1_depth.png"
@@ -256,7 +256,7 @@ if __name__ == "__main__":
 
     initial_vectors = a.normalized_vectors(initial_points_array, a.depth_map)
 
-    ic(initial_vectors)
+    #ic(initial_vectors)
     a.visualize_all_vectors(initial_vectors, initial_points_array, a.depth_map)
 
     b = Analyse(data_folder=data_folder_path,
@@ -268,7 +268,7 @@ if __name__ == "__main__":
 
     final_vectors = b.normalized_vectors(final_points_array, b.depth_map)
     
-    ic(final_vectors)
+    #ic(final_vectors)
 
     b.visualize_all_vectors(final_vectors, final_points_array, b.depth_map)
 
