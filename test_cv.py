@@ -12,7 +12,7 @@ class Analyse:
         self.fps = fps
         
         
-        self.img = cv2.resize(cv2.imread(img), (640, 480), fx=0, fy=0, interpolation=cv2.INTER_AREA)
+        self.img = cv2.resize(cv2.imread(img), (width, height), fx=0, fy=0, interpolation=cv2.INTER_AREA)
 
         self.depth_map = cv2.imread(depth_map, cv2.IMREAD_UNCHANGED)
 

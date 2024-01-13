@@ -3,9 +3,9 @@
 from test_cv import Analyse
 
 class Comparison: #This class assumes you have two folders, /data and /realsense
-    def __init__(self, directory_path):
-        self.data_folder = directory_path + "/data"
-        self.default_folder = directory_path + "/realsense"
+    def __init__(self, directory_path, data_folder = "/data", default_folder = "/realsense"):
+        self.data_folder = directory_path + data_folder
+        self.default_folder = directory_path + default_folder
 
     
     def return_all_data_path(self, default):
