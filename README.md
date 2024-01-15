@@ -51,6 +51,8 @@ After running test camera. the following folders...
 
 **test_cv.py**
 - class Analyse()
+- you would only need the file path of the image to innitialise the class
+- if depth file is not specified, the program would take all the depth value as 0. 
 - It will draw a contour around the stain spots
 - self.contour_ellipse will express the contours as an ellipse and store the centre and the axes of the ellipse in points_array
 - self.find_elipse_coordinate_and_depth returns the contours, the points array and sum_area of the stain
