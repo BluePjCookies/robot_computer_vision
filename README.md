@@ -21,9 +21,12 @@
 - It will record two different data files.
 1. RGB_photo.jpeg
 2. DEPTH_photo.png
-3. data.json
+
 - RGB photo records the color data
 - Depth photo records the depth data
+
+test_camera would update a json file.
+1. data.json
 - data.json would possess the horizontal, vertical offsets and focal length of the camera. Such values would only change when switching to a different type of realsense camera. 
 
 
