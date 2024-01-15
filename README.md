@@ -25,21 +25,29 @@
 - RGB photo records the color data
 - Depth photo records the depth data
 
-test_camera would update a json file.
-1. data.json
-- data.json would possess the horizontal, vertical offsets and focal length of the camera. Such values would only change when switching to a different type of realsense camera. 
-
 
 **test_camera.py**
 - class Camera()
 - Set the mode here, self.recording(mode=int..)
 - You can press s to take a video, press t to toggle between RGB and depth, and q to quit. Once q is pressed, the camera will record the data from the last frame and write the two files.
-- After the user set the images and depth data for these 3 modes, there should be 7 data files in the data folder. (plus data.json)
+- After the user set the images and depth data for these 3 modes, there should be 6 data files in the data folder.
 - All path are stored at self.storingfilepath()
 - self.Datatreatment returns all the colour and depth data from the frame
 - self.storingoffsets_and_focal_length stores horizontal, vertical offsets and focal length to a data.json file
 - self.getframedata expresses the depth and color of the frame in terms of np array
 - self.align resolution aligns the resolution (pixel width and length) of the depth and rgb camera image.
+- when user presses quit. test camera will update a data.json file
+- data.json would possess the horizontal, vertical offsets and focal length of the camera. Such values would only change when switching to a different type of realsense camera. 
+
+After running test camera. the following folders...
+
+**DATA FOLDER** should have ...
+- Photo_depth_perfect/_before/_after .png 
+- photo_perfect/_before/_after .jpeg
+
+**Robot_computer_vision** should have...
+- data.json
+
 
 **test_cv.py**
 - class Analyse()
@@ -49,13 +57,6 @@ test_camera would update a json file.
 - self.normalized vector returns vectors, which is how the robot arm will tilt to aim at the stain spot. It gets the vector perpendicular to the centre of the stain in the toilet bowl.
 - self.visualizevectors allows users to visualise all the vectors
 - self.find_ellipsis_coordinates_and_depth has a variable blur_level. Set it according to the level of precision of contours generated you want. Blur level must be a tuple consisting of two odd value and cannot be set as (1,1).
-
-
-**DATA FOLDER**
-- Data.json file to host offsets and focal length
-- Photo_depth_perfect/_before/_after .png 
-- photo_perfect/_before/_after .jpeg
-
 
 
 **main.py**
