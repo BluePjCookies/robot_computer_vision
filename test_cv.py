@@ -4,21 +4,26 @@ import numpy as np
 import matplotlib.pyplot as plt
 from icecream import ic
 import json
+import os
 
 class Analyse:
-    def __init__(self, width=640, height=480, fps=30, data_folder = None, img = None, depth_map = None, show_img=False):
+    def __init__(self, width=640, height=480, fps=30, img = None, depth_map = None, show_img=False):
         self.width = width
         self.height = height
         self.fps = fps
         
-        
         self.img = cv2.resize(cv2.imread(img), (width, height), fx=0, fy=0, interpolation=cv2.INTER_AREA)
-
-        self.depth_map = cv2.imread(depth_map, cv2.IMREAD_UNCHANGED)
+        
+        
+        if depth_map is not None: 
+            self.depth_map = cv2.imread(depth_map, cv2.IMREAD_UNCHANGED)
+        else:
+            #print("resetting to default depth of 0, due to data not having depth values")
+            self.depth_map = None
+        
+        self.default_data_json = img.split("robot_computer_vision")[0] + "robot_computer_vision/data.json"
 
         self.show_img = show_img
-
-        self.data_folder = data_folder
 
         
     def display(self, image):
@@ -93,19 +98,28 @@ class Analyse:
 
             #F1 and 2 holds the coordinates of the points that are at the greatest distance apart within the ellipsis
             #F1 stores the right most coordinate
-            F1 = (int(h + c * sin_theta), int(k - c * cos_theta),self.depth_map[int(k - c * sin_theta), int(h + c * cos_theta)])
-            
-            #F2 stores the left most coordinate
-            F2 = (int(h - c * sin_theta), int(k + c * cos_theta),self.depth_map[int(k + c * sin_theta), int(h - c * cos_theta)])
-            center=(int(h),int(k),self.depth_map[int(k),int(h) ])
+            if self.depth_map is not None:
+                F1 = (int(h + c * sin_theta), int(k - c * cos_theta),self.depth_map[int(k - c * sin_theta), int(h + c * cos_theta)])
+                
+                #F2 stores the left most coordinate
+                F2 = (int(h - c * sin_theta), int(k + c * cos_theta),self.depth_map[int(k + c * sin_theta), int(h - c * cos_theta)])
+                center=(int(h),int(k),self.depth_map[int(k),int(h) ])
+                
+            else: 
+                
+                F1 = (int(h + c * sin_theta), int(k - c * cos_theta),0)
+                
+                #F2 stores the left most coordinate
+                F2 = (int(h - c * sin_theta), int(k + c * cos_theta),0)
+                center=(int(h),int(k),0)
     
             
             # print("F1:", F1)
             # print("F2:", F2)
 
-            
+            sum_area += area
             if area >= 200: #size of the tools.
-                sum_area += area
+                
                 points_array.append(F1)
                 points_array.append(center)
                 points_array.append(F2)
@@ -117,6 +131,7 @@ class Analyse:
 
                 cv2.drawContours(self.img,cnt,-1,(0,0,255),2) #Draw red contours
             else:
+                
                 points_array.append(center) 
                 cv2.circle(self.img, (center[0], center[1]), 2, (0, 0, 255), -1)     
                 cv2.drawContours(self.img,cnt,-1,(0,0,255),2) #draw red contours
@@ -149,9 +164,14 @@ class Analyse:
             x = points_array[i][0]
             y = points_array[i][1]
             
-            plane_points[i][0] = (x + 10, y + 10, depth_map[int(y + 10), int(x+10)] )
-            plane_points[i][1] = (x - 10, y + 10, depth_map[int(y - 10), int(x+10)] )
-            plane_points[i][2] = (x , y - 10, depth_map[int(y - 8), int(x)] )
+            if self.depth_map is not None:
+                plane_points[i][0] = (x + 10, y + 10, depth_map[int(y + 10), int(x+10)] )
+                plane_points[i][1] = (x - 10, y + 10, depth_map[int(y - 10), int(x+10)] )
+                plane_points[i][2] = (x , y - 10, depth_map[int(y - 8), int(x)] )
+            else:
+                plane_points[i][0] = (x + 10, y + 10, 0 )
+                plane_points[i][1] = (x - 10, y + 10, 0 )
+                plane_points[i][2] = (x , y - 10, 0)
 
             
             v1= [plane_points[i][1][0]-plane_points[i][0][0],-plane_points[i][1][1]+plane_points[i][0][1],-float(plane_points[i][1][2])+float(plane_points[i][0][2])]
@@ -199,7 +219,7 @@ class Analyse:
 
     def retrieve_offsets_and_focal_length(self):
         data = {}
-        with open(self.data_folder + "/data.json", "r") as f:
+        with open(self.default_data_json) as f:
             data = json.load(f)
         
         return data["ppx"], data["ppy"], data["fx"], data["fy"]
@@ -216,7 +236,12 @@ class Analyse:
 
             x, y, z = points_array[i]
             target_xy_pixel = [x, y]
-            target_depth = depth_map[int(y), int(x)]  
+            
+            if self.depth_map is not None:
+                target_depth = depth_map[int(y), int(x)]  
+            else:
+                target_depth = 0
+            
             target_xy_true = [(target_xy_pixel[0] - ppx) * target_depth / fx,
                                 (target_xy_pixel[1] - ppy) * target_depth / fy]
             
@@ -239,16 +264,16 @@ class Analyse:
     
     
 if __name__ == "__main__":
-    data_folder_path = "/Users/Joshua/Vscode/Python/robot_computer_vision/realsense"
+    data_folder_path = "/Users/joshua/vscode/hivebotics/robot_computer_vision/realsense"
     
-    image_path = data_folder_path + "/before.jpeg"
-    depth_path = data_folder_path + "/1_depth.png"
+    image_path = data_folder_path + "/photo_before.jpeg"
+    depth_path = data_folder_path + "/photo_depth.png"
 
     
-    a = Analyse(data_folder=data_folder_path,
+    a = Analyse(
                 img=image_path,
-                depth_map=depth_path,
-                show_img=True)
+                show_img=True,
+                depth_map=depth_path)
     
     
 
@@ -259,10 +284,10 @@ if __name__ == "__main__":
     #ic(initial_vectors)
     a.visualize_all_vectors(initial_vectors, initial_points_array, a.depth_map)
 
-    b = Analyse(data_folder=data_folder_path,
-                img = data_folder_path + "/after.jpeg",
-                depth_map=data_folder_path + "/1_depth.png",
-                show_img=True)
+    b = Analyse(
+                img = data_folder_path + "/photo_after.jpeg",
+                show_img=True,
+                depth_map=data_folder_path + "/photo_depth.png")
     
     final_contours, final_points_array, final_sum_area = b.find_ellipsis_coordinates_and_depth()
 

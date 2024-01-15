@@ -117,7 +117,7 @@ class Camera():
         #stores the depth_data from the last frame of the video here
         photo_depth_path = self.data_folder + f"/photo_depth{classify_modes[mode]}.png"
         #stores the x,y,z offsets here
-        json_file_path = self.data_folder + "/data.json"
+        json_file_path = self.data_folder.split("robot_computer_vision")[0] + "robot_conputer_vision/data.json"
 
         return video_path, video_depthcolor_path, video_depth16_path, photo_path, photo_depth_path, json_file_path
     
