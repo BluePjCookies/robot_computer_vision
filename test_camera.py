@@ -4,9 +4,9 @@ import cv2
 import h5py
 import json
 from icecream import ic
-
+from files import Files
 class Camera():
-    def __init__(self, width=640, height=480, fps=30, ColorAndDepth = False, data_folder = None):
+    def __init__(self, width=640, height=480, fps=30, ColorAndDepth = False, home_folder = None, data_folder = None):
         
         self.width = width
         self.height = height
@@ -16,7 +16,7 @@ class Camera():
         self.pipeline = rs.pipeline()
         self.config = rs.config()
         self.data_folder = data_folder
-
+        self.f = Files(home_folder=home_folder)
         
         
         self.config.enable_stream(rs.stream.color, self.width, self.height, rs.format.bgr8, fps)
@@ -55,7 +55,7 @@ class Camera():
         return aligned_frame, aligned_depth_frame, aligned_color_frame 
     
     def storing_offsets_and_focal_length(self, frame, mode):
-        _, _, _, _, _, json_file_path = self.storingfilepath(mode)
+        _, _, _, _, _, json_file_path = self.f.datafilepath(mode=mode, data_folder=self.data_folder)
         _, _, aligned_color_frame  = self.alignresolution(frame)
 
         #Retrieve the internal parameters of the coloured frame
@@ -101,30 +101,10 @@ class Camera():
     
     def release(self):
         self.pipeline.stop()
-
     
-    def storingfilepath(self, mode):
-
-        classify_modes = {1:"_perfect", 2:"_before", 3:"_after"}
-        #Stores the RGB video here
-        video_path = self.data_folder + "/targetvideo_rgb.mp4"
-        #Stores the Color&depth video here
-        video_depthcolor_path = self.data_folder + "/targetvideo_depthcolor.mp4"
-        #stores the video_depth data here
-        video_depth16_path = self.data_folder + "/targetvideo_depth.h5"
-        #stores the last frame of the video here
-        photo_path = self.data_folder + f"/photo{classify_modes[mode]}.jpeg"
-        #stores the depth_data from the last frame of the video here
-        photo_depth_path = self.data_folder + f"/photo_depth{classify_modes[mode]}.png"
-        #stores the x,y,z offsets here
-        json_file_path = self.data_folder.split("robot_computer_vision")[0] + "robot_conputer_vision/data.json"
-
-        return video_path, video_depthcolor_path, video_depth16_path, photo_path, photo_depth_path, json_file_path
-    
-
     def initialise_recording_function(self, mode):
 
-        video_path, video_depthcolor_path, video_depth16_path, _, _, _= self.storingfilepath(mode=mode)
+        video_path, video_depthcolor_path, video_depth16_path, _, _, _= self.f.datafilepath(mode=mode, data_folder=self.data_folder)
         
         mp4 = cv2.VideoWriter_fourcc(*'mp4v') 
 
@@ -134,6 +114,7 @@ class Camera():
         wr_depth = h5py.File(video_depth16_path, 'w')
 
         return wr, wr_colordepth, wr_depth
+    
     def handling_exception(self, mode):
        #1 - Perfectly clean toilet, 2 - Dirty Toilet, 3 - Toilet after cleaning
         if isinstance(mode, int) is False:
@@ -150,7 +131,7 @@ class Camera():
         print("Press s to record, t to toggle and q to quit")
 
         #Retrieve all the file Path
-        video_path, _, _, photo_path, photo_depth_path, _ = self.storingfilepath(mode=mode)
+        video_path, _, _, photo_path, photo_depth_path, _ = self.f.datafilepath(mode=mode, data_folder=self.data_folder)
 
         idx = 0
         
@@ -221,7 +202,8 @@ class Camera():
 
 if __name__ == "__main__":
 
-    c = Camera(data_folder="/Users/joshua/vscode/hivebotics/robot_computer_vision/data")
+    c = Camera(data_folder="/Users/joshua/vscode/hivebotics/robot_computer_vision/data",
+               home_folder="/Users/Joshua/Vscode/Python/robot_computer_vision")
     
     c.recording(mode=3)
 

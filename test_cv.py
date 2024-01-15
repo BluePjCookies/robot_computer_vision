@@ -5,24 +5,27 @@ import matplotlib.pyplot as plt
 from icecream import ic
 import json
 import os
-
+from files import Files
 class Analyse:
-    def __init__(self, width=640, height=480, fps=30, img = None, depth_map = None, show_img=False):
+    def __init__(self, width=640, height=480, fps=30, img = None, depth_map = None, show_img=False, home_folder=None):
         self.width = width
         self.height = height
         self.fps = fps
         
         self.img = cv2.resize(cv2.imread(img), (width, height), fx=0, fy=0, interpolation=cv2.INTER_AREA)
+        self.f = Files(home_folder=home_folder)
         
-        
-        if depth_map is not None: 
+        if depth_map is not None and os.path.isfile(depth_map): 
             self.depth_map = cv2.imread(depth_map, cv2.IMREAD_UNCHANGED)
-        else:
-            #print("resetting to default depth of 0, due to data not having depth values")
+        elif depth_map is None:
             self.depth_map = None
+        else:
+            raise Exception("depth map is not an actual file")
         
-        self.default_data_json = img.split("robot_computer_vision")[0] + "robot_computer_vision/data.json"
+            
 
+        self.default_data_json = self.f.json_file_path
+        
         self.show_img = show_img
 
         
@@ -79,7 +82,7 @@ class Analyse:
         #Blur level is a tuple that consist of 2 odd numbered values, a lesser odd value would mean a lesser degree of blurring done to process the image.
         #To get the most detailed contour, a value of (3, 3) for the blur_level would be recommended. (1,1) would cause errors
         
-        _, contours,_ = cv2.findContours(self.enhance_contrast(self.img, blur_level=blur_level), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        contours,_ = cv2.findContours(self.enhance_contrast(self.img, blur_level=blur_level), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
         sum_area=0
         points_array = []
         
@@ -264,8 +267,8 @@ class Analyse:
     
     
 if __name__ == "__main__":
-    data_folder_path = "/Users/joshua/vscode/hivebotics/robot_computer_vision/realsense"
-    
+    data_folder_path = "/Users/Joshua/Vscode/Python/robot_computer_vision/realsense"
+    home_folder = "/Users/Joshua/Vscode/Python/robot_computer_vision"
     image_path = data_folder_path + "/photo_before.jpeg"
     depth_path = data_folder_path + "/photo_depth.png"
 
@@ -273,7 +276,9 @@ if __name__ == "__main__":
     a = Analyse(
                 img=image_path,
                 show_img=True,
-                depth_map=depth_path)
+                depth_map=None,
+                home_folder=home_folder
+                )
     
     
 
@@ -284,24 +289,6 @@ if __name__ == "__main__":
     #ic(initial_vectors)
     a.visualize_all_vectors(initial_vectors, initial_points_array, a.depth_map)
 
-    b = Analyse(
-                img = data_folder_path + "/photo_after.jpeg",
-                show_img=True,
-                depth_map=data_folder_path + "/photo_depth.png")
-    
-    final_contours, final_points_array, final_sum_area = b.find_ellipsis_coordinates_and_depth()
-
-    final_vectors = b.normalized_vectors(final_points_array, b.depth_map)
-    
-    #ic(final_vectors)
-
-    b.visualize_all_vectors(final_vectors, final_points_array, b.depth_map)
-
-    if initial_sum_area != 0:
-
-        percentage_cleaned = (initial_sum_area-final_sum_area)*100/initial_sum_area
-
-        ic(f"{percentage_cleaned}%")
     
     
     

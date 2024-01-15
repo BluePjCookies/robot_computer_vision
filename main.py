@@ -2,33 +2,34 @@
 
 from test_cv import Analyse
 from icecream import ic
+from files import Files
 
 class Comparison: #This class assumes you have two folders, /data and /realsense
-    def __init__(self, data_folder):
+    def __init__(self, data_folder = None, has_depth=False, home_folder=None):
         self.data_folder = data_folder
-
         
+        self.f = Files(home_folder=home_folder)
+
+        _,_,_,photo_path_perfect, photo_depth_path_perfect, _  = self.f.datafilepath(data_folder=data_folder, mode=1)
+        _,_,_,photo_path_before, photo_depth_path_before, _  = self.f.datafilepath(data_folder=data_folder, mode=2)
+        _,_,_,photo_path_after, photo_depth_path_after, _  = self.f.datafilepath(data_folder=data_folder, mode=3)
+        
+        if has_depth is False:
+            photo_depth_path_perfect, photo_depth_path_before, photo_depth_path_after = None, None, None
+        
+        self.perfect = Analyse(img = photo_path_perfect,
+                               depth_map=photo_depth_path_perfect,
+                               home_folder=home_folder)
+        
+        self.before = Analyse(img = photo_path_before,
+                              depth_map=photo_depth_path_before,
+                              home_folder=home_folder)
+        
+        self.after = Analyse(img = photo_path_after,
+                             depth_map=photo_depth_path_after,
+                             home_folder=home_folder)
     
-    def return_all_data_path(self):
-        
-        modes = ["_perfect", "_before", "_after"]
-        photo_file_path = (self.data_folder + f"/photo{mode}.jpeg" for mode in modes)
-        photo_path_perfect, photo_path_before, photo_path_after = photo_file_path
-        photo_depth_file_path = (self.data_folder + f"/photo_depth{mode}.png" for mode in modes)
-        photo_depth_path_perfect, photo_depth_path_before, photo_depth_path_after = photo_depth_file_path
-
-        return photo_path_perfect, photo_path_before, photo_path_after, photo_depth_path_perfect, photo_depth_path_before, photo_depth_path_after
-
     def compare(self, show_img=True):
-
-        photo_path_perfect, photo_path_before, photo_path_after, photo_depth_path_perfect, photo_depth_path_before, photo_depth_path_after = self.return_all_data_path()
-        
-       
-        self.perfect = Analyse(img = photo_path_perfect)
-        
-        self.before = Analyse(img = photo_path_before)
-        
-        self.after = Analyse(img = photo_path_after)
 
         self.perfect.show_img = show_img
         self.before.show_img = show_img
@@ -55,5 +56,7 @@ class Comparison: #This class assumes you have two folders, /data and /realsense
 
 if __name__ == "__main__":
 
-    machine = Comparison(data_folder=f"/Users/joshua/vscode/hivebotics/robot_computer_vision/testing/TEST SET 7 (Floor)")
+    machine = Comparison(data_folder=f"/Users/Joshua/Vscode/Python/robot_computer_vision/realsense", 
+                         has_depth=False,
+                         home_folder="/Users/Joshua/Vscode/Python/robot_computer_vision")
     machine.compare(show_img=True)
