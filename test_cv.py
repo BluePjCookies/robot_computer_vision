@@ -234,8 +234,8 @@ class Analyse:
         X = np.array([])
         Y = np.array([])
         Z = np.array([])
-        for x in range(0, self.width, 3):
-            for y in range(0, self.height, 3):
+        for x in range(0, self.width, 5):
+            for y in range(0, self.height, 5):
                 X = np.append(X, x)
                 Y = np.append(Y, y)
                 z = depth_map[y, x]
@@ -301,10 +301,10 @@ class Analyse:
     
     
 if __name__ == "__main__":
-    data_folder_path = "/Users/joshua/vscode/hivebotics/robot_computer_vision/data"
+    data_folder_path = "/Users/joshua/vscode/hivebotics/robot_computer_vision/testing"
     home_folder = "/Users/joshua/vscode/hivebotics/robot_computer_vision"
     image_path = data_folder_path + "/photo_after.jpeg"
-    depth_path = data_folder_path + "/photo_depth_after.png"
+    depth_path = data_folder_path + "/photo_depth.png"
 
     
     a = Analyse(
