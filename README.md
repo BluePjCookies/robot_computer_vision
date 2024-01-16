@@ -25,13 +25,15 @@
 - RGB photo records the color data
 - Depth photo records the depth data
 
-
+**files.py**
+- class Files
+- needs a home folder that contains a data.json file to initialise
+- self.datafilepath outputs all the file path 
 **test_camera.py**
 - class Camera()
 - Set the mode here, self.recording(mode=int..)
 - You can press s to take a video, press t to toggle between RGB and depth, and q to quit. Once q is pressed, the camera will record the data from the last frame and write the two files.
 - After the user set the images and depth data for these 3 modes, there should be 6 data files in the data folder.
-- All path are stored at self.storingfilepath()
 - self.Datatreatment returns all the colour and depth data from the frame
 - self.storingoffsets_and_focal_length stores horizontal, vertical offsets and focal length to a data.json file
 - self.getframedata expresses the depth and color of the frame in terms of np array

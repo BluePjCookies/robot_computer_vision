@@ -185,7 +185,7 @@ class Camera():
                 
             if (key & 0xFF == ord('q') or key == 27):
 
-                cv2.imwrite(photo_path, color_image)
+                cv2.imwrite(photo_path, aligned_color_image)
                 cv2.imwrite(photo_depth_path, aligned_depth_image)
                 cv2.destroyAllWindows()
                 print('...quit...')
@@ -203,7 +203,7 @@ class Camera():
 if __name__ == "__main__":
 
     c = Camera(data_folder="/Users/joshua/vscode/hivebotics/robot_computer_vision/data",
-               home_folder="/Users/Joshua/Vscode/Python/robot_computer_vision")
+               home_folder="/Users/joshua/vscode/hivebotics/robot_computer_vision")
     
     c.recording(mode=3)
 

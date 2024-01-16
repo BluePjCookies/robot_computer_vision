@@ -6,6 +6,7 @@ from icecream import ic
 import json
 import os
 from files import Files
+from mpl_toolkits.mplot3d import Axes3D
 class Analyse:
     def __init__(self, width=640, height=480, fps=30, img = None, depth_map = None, show_img=False, home_folder=None):
         self.width = width
@@ -21,7 +22,6 @@ class Analyse:
             self.depth_map = None
         else:
             raise Exception("depth map is not an actual file")
-        
             
 
         self.default_data_json = self.f.json_file_path
@@ -51,16 +51,14 @@ class Analyse:
         #To get the most detailed contour, a value of (3, 3) for the blur_level would be recommended. (1,1) would cause errors
 
         blur = cv2.GaussianBlur(B, blur_level, 0)#if the dirty spot is transparent, pls change B into A, add UV light too
-        self.display(blur)
+
         ret,thresh = cv2.threshold(blur,145,255,cv2.THRESH_BINARY)#second value is the treshold value that if you want the code more active pls decrease the value in opposite increase the value. Usually 140-150 is recommended 
-        self.display(thresh)
+    
         k1 = np.ones(blur_level, np.uint8)
 
         #Remove noise from the data
         thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, k1)
 
-        
-        self.display(thresh)
 
         return thresh
     
@@ -81,8 +79,10 @@ class Analyse:
 
         #Blur level is a tuple that consist of 2 odd numbered values, a lesser odd value would mean a lesser degree of blurring done to process the image.
         #To get the most detailed contour, a value of (3, 3) for the blur_level would be recommended. (1,1) would cause errors
-        
-        contours,_ = cv2.findContours(self.enhance_contrast(self.img, blur_level=blur_level), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        try:
+            contours,_ = cv2.findContours(self.enhance_contrast(self.img, blur_level=blur_level), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        except:
+            _, contours,_ = cv2.findContours(self.enhance_contrast(self.img, blur_level=blur_level), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
         sum_area=0
         points_array = []
         
@@ -101,11 +101,16 @@ class Analyse:
 
             #F1 and 2 holds the coordinates of the points that are at the greatest distance apart within the ellipsis
             #F1 stores the right most coordinate
+
             if self.depth_map is not None:
-                F1 = (int(h + c * sin_theta), int(k - c * cos_theta),self.depth_map[int(k - c * sin_theta), int(h + c * cos_theta)])
+                kminus = min(int(k - c * sin_theta), self.height-1)
+                hplus = min(int(h + c * cos_theta), self.width-1)
+                kplus = min(int(k + c * sin_theta), self.height-1)
+                hminus = min(int(h - c * cos_theta), self.width-1)
+                F1 = (int(h + c * sin_theta), int(k - c * cos_theta),self.depth_map[kminus, hplus])
                 
                 #F2 stores the left most coordinate
-                F2 = (int(h - c * sin_theta), int(k + c * cos_theta),self.depth_map[int(k + c * sin_theta), int(h - c * cos_theta)])
+                F2 = (int(h - c * sin_theta), int(k + c * cos_theta),self.depth_map[kplus, hminus])
                 center=(int(h),int(k),self.depth_map[int(k),int(h) ])
                 
             else: 
@@ -168,8 +173,11 @@ class Analyse:
             y = points_array[i][1]
             
             if self.depth_map is not None:
-                plane_points[i][0] = (x + 10, y + 10, depth_map[int(y + 10), int(x+10)] )
-                plane_points[i][1] = (x - 10, y + 10, depth_map[int(y - 10), int(x+10)] )
+                yplus = min(int(y+10), self.height-1)
+                yminus = min(int(y-10), self.height-1)
+                xplus = min(int(x+10), self.width-1)
+                plane_points[i][0] = (x + 10, y + 10, depth_map[yplus, xplus] )
+                plane_points[i][1] = (x - 10, y + 10, depth_map[yminus, xplus] )
                 plane_points[i][2] = (x , y - 10, depth_map[int(y - 8), int(x)] )
             else:
                 plane_points[i][0] = (x + 10, y + 10, 0 )
@@ -218,6 +226,32 @@ class Analyse:
         ax.set_ylabel('Y')
         ax.set_zlabel('Z')
         plt.show()
+    
+    def visualize_depth_map(self, depth_map):
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        cmap = plt.cm.coolwarm 
+        X = np.array([])
+        Y = np.array([])
+        Z = np.array([])
+        for x in range(0, self.width, 3):
+            for y in range(0, self.height, 3):
+                X = np.append(X, x)
+                Y = np.append(Y, y)
+                z = depth_map[y, x]
+                Z = np.append(Z, z)
+                
+        ax.scatter(X,Y,Z,cmap='plasma',c=Z)
+        #set limits to the 3d graph
+        ax.set_xlim([0, self.width])
+        ax.set_ylim([0, self.height])
+        ax.set_zlim([0, 1000])
+
+        ax.set_xlabel('X')
+        ax.set_ylabel('Y')
+        ax.set_zlabel('Z')
+        plt.show()
+
 
 
     def retrieve_offsets_and_focal_length(self):
@@ -267,17 +301,17 @@ class Analyse:
     
     
 if __name__ == "__main__":
-    data_folder_path = "/Users/Joshua/Vscode/Python/robot_computer_vision/realsense"
-    home_folder = "/Users/Joshua/Vscode/Python/robot_computer_vision"
-    image_path = data_folder_path + "/photo_before.jpeg"
-    depth_path = data_folder_path + "/photo_depth.png"
+    data_folder_path = "/Users/joshua/vscode/hivebotics/robot_computer_vision/data"
+    home_folder = "/Users/joshua/vscode/hivebotics/robot_computer_vision"
+    image_path = data_folder_path + "/photo_after.jpeg"
+    depth_path = data_folder_path + "/photo_depth_after.png"
 
     
     a = Analyse(
                 img=image_path,
                 show_img=True,
-                depth_map=None,
-                home_folder=home_folder
+                home_folder=home_folder,
+                depth_map=depth_path
                 )
     
     
@@ -288,7 +322,7 @@ if __name__ == "__main__":
 
     #ic(initial_vectors)
     a.visualize_all_vectors(initial_vectors, initial_points_array, a.depth_map)
-
+    a.visualize_depth_map(a.depth_map)
     
     
     
