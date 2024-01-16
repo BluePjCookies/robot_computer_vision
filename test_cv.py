@@ -305,10 +305,10 @@ class Analyse:
     
     
 if __name__ == "__main__":
-    data_folder_path = "/Users/joshua/vscode/hivebotics/robot_computer_vision/data"
-    home_folder = "/Users/joshua/vscode/hivebotics/robot_computer_vision"
-    image_path = data_folder_path + "/photo_after.jpeg"
-    depth_path = data_folder_path + "/photo_depth_after.png"
+    data_folder_path = "/Users/Joshua/Vscode/Python/robot_computer_vision/testing"
+    home_folder = "/Users/Joshua/Vscode/Python/robot_computer_vision"
+    image_path = data_folder_path + "/photo_before.jpeg"
+    depth_path = data_folder_path + "/photo_depth.png"
 
     
     a = Analyse(
