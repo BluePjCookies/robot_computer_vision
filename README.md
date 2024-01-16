@@ -61,6 +61,7 @@ After running test camera. the following folders...
 - self.normalized vector returns vectors, which is how the robot arm will tilt to aim at the stain spot. It gets the vector perpendicular to the centre of the stain in the toilet bowl.
 - self.visualizevectors allows users to visualise all the vectors
 - self.find_ellipsis_coordinates_and_depth has a variable blur_level. Set it according to the level of precision of contours generated you want. Blur level must be a tuple consisting of two odd value and cannot be set as (1,1).
+- addition of visualise depth image, allow you to get a 3d view of the frame
 
 
 **main.py**
