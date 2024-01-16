@@ -35,9 +35,9 @@ class Comparison: #This class assumes you have two folders, /data and /realsense
         self.before.show_img = show_img
         self.after.show_img = show_img
 
-        perfect_contours, perfect_points_array, perfect_sum_area = self.perfect.find_ellipsis_coordinates_and_depth()
-        before_contours, before_points_array, before_sum_area = self.before.find_ellipsis_coordinates_and_depth()
-        after_contours, after_points_array, after_sum_area = self.after.find_ellipsis_coordinates_and_depth()
+        perfect_contours, perfect_points_array, perfect_sum_area = self.perfect.find_ellipse_coordinates_and_depth()
+        before_contours, before_points_array, before_sum_area = self.before.find_ellipse_coordinates_and_depth()
+        after_contours, after_points_array, after_sum_area = self.after.find_ellipse_coordinates_and_depth()
 
         ic(perfect_sum_area, before_sum_area, after_sum_area)
         if before_sum_area != 0:
@@ -56,7 +56,7 @@ class Comparison: #This class assumes you have two folders, /data and /realsense
 
 if __name__ == "__main__":
 
-    machine = Comparison(data_folder=f"/Users/joshua/vscode/hivebotics/robot_computer_vision/testing", 
+    machine = Comparison(data_folder=f"/Users/Joshua/Vscode/Python/robot_computer_vision/data", 
                          has_depth=False,
-                         home_folder="/Users/joshua/vscode/hivebotics/robot_computer_vision")
+                         home_folder="/Users/Joshua/Vscode/Python/robot_computer_vision")
     machine.compare(show_img=True)

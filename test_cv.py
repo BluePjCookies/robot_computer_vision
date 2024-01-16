@@ -69,7 +69,7 @@ class Analyse:
         
         return area, center, axes, angle
     
-    def find_ellipsis_coordinates_and_depth(self, blur_level = (3,3)) -> (float, float, float):
+    def find_ellipse_coordinates_and_depth(self, blur_level = (3,3)) -> (float, float, float):
         
         #Determine the contours in the image
         #By expressing such contours as an ellipse, we can identify the centre and the extreme leftmost, rightmost side (axes) of the ellipse
@@ -317,7 +317,7 @@ if __name__ == "__main__":
     
     
 
-    initial_contours, initial_points_array, initial_sum_area = a.find_ellipsis_coordinates_and_depth(blur_level=(3,3))
+    initial_contours, initial_points_array, initial_sum_area = a.find_ellipse_coordinates_and_depth(blur_level=(3,3))
 
     initial_vectors = a.normalized_vectors(initial_points_array, a.depth_map)
 

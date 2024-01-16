@@ -26,6 +26,7 @@
 - Depth photo records the depth data
 
 **files.py**
+
 - class Files
 - needs a home folder that contains a data.json file to initialise
 - self.datafilepath outputs all the file path 
