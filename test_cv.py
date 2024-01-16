@@ -2,11 +2,9 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-from icecream import ic
 import json
 import os
 from files import Files
-from mpl_toolkits.mplot3d import Axes3D
 class Analyse:
     def __init__(self, width=640, height=480, fps=30, img = None, depth_map = None, show_img=False, home_folder=None):
         self.width = width
@@ -240,8 +238,7 @@ class Analyse:
             for y in range(0, self.height, 5):
                 X = np.append(X, x)
                 Y = np.append(Y, y)
-                z = depth_map[y, x]
-                Z = np.append(Z, z)
+                Z = np.append(Z, depth_map[y, x])
                 
         ax.scatter(X,Y,Z,cmap='plasma',c=Z)
         #set limits to the 3d graph
@@ -307,7 +304,7 @@ class Analyse:
 if __name__ == "__main__":
     data_folder_path = "/Users/Joshua/Vscode/Python/robot_computer_vision/testing"
     home_folder = "/Users/Joshua/Vscode/Python/robot_computer_vision"
-    image_path = data_folder_path + "/photo_before.jpeg"
+    image_path = data_folder_path + "/photo_after.jpeg"
     depth_path = data_folder_path + "/photo_depth.png"
 
     
