@@ -176,9 +176,11 @@ class Analyse:
                 yplus = min(int(y+10), self.height-1)
                 yminus = min(int(y-10), self.height-1)
                 xplus = min(int(x+10), self.width-1)
+                yminus8 = min(int(y - 8), self.height-1)
                 plane_points[i][0] = (x + 10, y + 10, depth_map[yplus, xplus] )
                 plane_points[i][1] = (x - 10, y + 10, depth_map[yminus, xplus] )
-                plane_points[i][2] = (x , y - 10, depth_map[int(y - 8), int(x)] )
+                
+                plane_points[i][2] = (x , y - 10, depth_map[yminus8, int(x)] )
             else:
                 plane_points[i][0] = (x + 10, y + 10, 0 )
                 plane_points[i][1] = (x - 10, y + 10, 0 )
@@ -275,6 +277,8 @@ class Analyse:
             target_xy_pixel = [x, y]
             
             if self.depth_map is not None:
+                y = min(int(y), self.height-1)
+                x = min(int(x), self.width-1)
                 target_depth = depth_map[int(y), int(x)]  
             else:
                 target_depth = 0
@@ -301,10 +305,10 @@ class Analyse:
     
     
 if __name__ == "__main__":
-    data_folder_path = "/Users/joshua/vscode/hivebotics/robot_computer_vision/testing"
+    data_folder_path = "/Users/joshua/vscode/hivebotics/robot_computer_vision/data"
     home_folder = "/Users/joshua/vscode/hivebotics/robot_computer_vision"
     image_path = data_folder_path + "/photo_after.jpeg"
-    depth_path = data_folder_path + "/photo_depth.png"
+    depth_path = data_folder_path + "/photo_depth_after.png"
 
     
     a = Analyse(
