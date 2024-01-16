@@ -91,6 +91,9 @@ After running test camera. the following folders...
 - User can set blur level in self.find_ellipsis_coordinates_and_depth
 ![blurlevel](https://github.com/BluePjCookies/robot_computor_vision/blob/main/screen_shot/image.png)
 
+**3D view of depth map**
+![video](https://github.com/BluePjCookies/robot_computer_vision/blob/main/screen_shot/depth_map.mov)
+
 **3D view of Normalized-vectors**
 ![video](https://github.com/BluePjCookies/robot_computer_vision/blob/main/screen_shot/3dvector.mov)
 
