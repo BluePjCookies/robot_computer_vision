@@ -56,7 +56,7 @@ class Comparison: #This class assumes you have two folders, /data and /realsense
 
 if __name__ == "__main__":
 
-    machine = Comparison(data_folder=f"/Users/Joshua/Vscode/Python/robot_computer_vision/testing", 
+    machine = Comparison(data_folder=f"/Users/joshua/vscode/hivebotics/robot_computer_vision/testing", 
                          has_depth=False,
-                         home_folder="/Users/Joshua/Vscode/Python/robot_computer_vision")
+                         home_folder="/Users/joshua/vscode/hivebotics/robot_computer_vision")
     machine.compare(show_img=True)

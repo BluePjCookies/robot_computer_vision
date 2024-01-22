@@ -6,7 +6,7 @@ import json
 import os
 from files import Files
 class Analyse:
-    def __init__(self, width=640, height=480, fps=30, img = None, depth_map = None, show_img=False, home_folder=None):
+    def __init__(self, width=640, height=480, fps=30, img = None, depth_map = None, show_img=False, home_folder=None, perfect_img = None):
         self.width = width
         self.height = height
         self.fps = fps
@@ -26,6 +26,10 @@ class Analyse:
         
         self.show_img = show_img
 
+        if perfect_img is not None:
+            self.perfect_img = cv2.resize(cv2.imread(perfect_img), (width, height), fx=0, fy=0, interpolation=cv2.INTER_AREA)
+        else:
+            self.perfect_img = None
         
     def display(self, image):
         if self.show_img:
@@ -41,22 +45,41 @@ class Analyse:
         #blur level is a tuple consisting of only odd number. 
         
         self.display(img)
-        #L - Lightness/Intensity, A - Green to Purple, B - Blue to yellow
-        LabImg = cv2.cvtColor(img, cv2.COLOR_BGR2Lab)
-        L,A,B = cv2.split(LabImg)
 
-        #Blur the Image
-        #To get the most detailed contour, a value of (3, 3) for the blur_level would be recommended. (1,1) would cause errors
+        if self.perfect_img is not None:
+            print("displaying perfect image")
+            self.display(self.perfect_img)
+            
+            subtract = cv2.subtract(self.perfect_img, img)
+            self.display(subtract)
 
-        blur = cv2.GaussianBlur(B, blur_level, 0)#if the dirty spot is transparent, pls change B into A, add UV light too
+            ret,thresh = cv2.threshold(subtract,140,255,cv2.THRESH_BINARY)#second value is the treshold value that if you want the code more active pls decrease the value in opposite increase the value. Usually 140-150 is recommended 
+        
+            k1 = np.ones(blur_level, np.uint8)
 
-        ret,thresh = cv2.threshold(blur,145,255,cv2.THRESH_BINARY)#second value is the treshold value that if you want the code more active pls decrease the value in opposite increase the value. Usually 140-150 is recommended 
-    
-        k1 = np.ones(blur_level, np.uint8)
+            #Remove noise from the data
+            thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, k1)
+            thresh = cv2.cvtColor(thresh, cv2.COLOR_BGR2GRAY)
+        
+        else:
+            #L - Lightness/Intensity, A - Green to Purple, B - Blue to yellow
+            LabImg = cv2.cvtColor(img, cv2.COLOR_BGR2Lab)
+            L,A,B = cv2.split(LabImg)
 
-        #Remove noise from the data
-        thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, k1)
+            #Blur the Image
+            #To get the most detailed contour, a value of (3, 3) for the blur_level would be recommended. (1,1) would cause errors
 
+            blur = cv2.GaussianBlur(B, blur_level, 0)#if the dirty spot is transparent, pls change B into A, add UV light too
+
+            ret,thresh = cv2.threshold(blur,145,255,cv2.THRESH_BINARY)#second value is the treshold value that if you want the code more active pls decrease the value in opposite increase the value. Usually 140-150 is recommended 
+        
+            k1 = np.ones(blur_level, np.uint8)
+
+            #Remove noise from the data
+            thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, k1)
+
+            
+        self.display(thresh)
 
         return thresh
     
@@ -77,10 +100,11 @@ class Analyse:
 
         #Blur level is a tuple that consist of 2 odd numbered values, a lesser odd value would mean a lesser degree of blurring done to process the image.
         #To get the most detailed contour, a value of (3, 3) for the blur_level would be recommended. (1,1) would cause errors
+        thresh = self.enhance_contrast(self.img, blur_level=blur_level)
         try:
-            contours,_ = cv2.findContours(self.enhance_contrast(self.img, blur_level=blur_level), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+            contours,_ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
         except:
-            _, contours,_ = cv2.findContours(self.enhance_contrast(self.img, blur_level=blur_level), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+            _, contours,_ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
         sum_area=0
         points_array = []
         
