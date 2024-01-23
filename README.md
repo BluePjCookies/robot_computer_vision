@@ -107,7 +107,7 @@ class Camera():
 
 ```python
 class Analyse:
-    def __init__(self, width=640, height=480, fps=30, img:str = None, depth_map:str = None, show_img=False, home_folder:str=None):
+    def __init__(self, width=640, height=480, fps=30, img = None, depth_map = None, show_img=False, home_folder=None, perfect_img = None):
       ... #initialise file path. if depth map set to None. Default depth are all set to 0
 
    def display(self, image):
@@ -158,6 +158,7 @@ class Analyse:
 - self.visualizevectors allows users to visualise all the vectors
 - self.find_ellipsis_coordinates_and_depth has a variable blur_level. Set it according to the level of precision of contours generated you want. Blur level must be a tuple consisting of two odd value and cannot be set as (1,1).
 - addition of visualise depth image, allow you to get a 3d view of the frame
+- perfect_img variables allows one to subtract the current image with the perfect one. This however is optional and can be used if perfect image is available
 
 
 **Identifying stains**

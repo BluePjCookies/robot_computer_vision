@@ -40,12 +40,18 @@ for p in path:
     initial_contours, initial_points_array, initial_sum_area = a.find_ellipse_coordinates_and_depth(blur_level=(3,3))
     print(p, initial_sum_area)"""
 
-a = Analyse(
-            img="/Users/joshua/Downloads/Toilet Bowl/BAND 3/img_0030.jpeg",
-            show_img=True,
-            home_folder="/Users/joshua/vscode/hivebotics/robot_computer_vision"
-            )
+directory = "/Users/joshua/vscode/hivebotics/Toilet Bowl/BAND 4"
 
-initial_contours, initial_points_array, initial_sum_area = a.find_ellipse_coordinates_and_depth(blur_level=(3,3))
+files = sorted(os.listdir(directory),key=lambda x : int(x[6:8]))
+print(files)
 
-print(initial_sum_area)
+for path in files:
+    path = directory + "/" + path
+    print(path)
+    a = Analyse(
+                img=path,
+                home_folder="/Users/joshua/vscode/hivebotics/robot_computer_vision"
+                )
+    a.show_img = True
+    a.display(a.img)
+    
