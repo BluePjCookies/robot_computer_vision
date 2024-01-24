@@ -2,15 +2,18 @@ from test_cv import Analyse
 import os
 import cv2
 from icecream import ic
-"""#converting everything to jpeg
-directory = "/Users/joshua/Downloads/Toilet Bowl/BAND 1 (Worst-case scenario)"
+import keyboard
+import time
+#converting everything to jpeg
+directory = "/Users/joshua/Downloads/Toilet Bowl/BAND 5 (Best-case scenairo)"
 
-files = os.listdir(directory)
+"""files = os.listdir(directory)
 
 for path in files:
     path = directory + "/" + path
     image = cv2.imread(path)
     expected_path = path.lower().replace(".jpg", ".jpeg")
+    print(expected_path)
     cv2.imwrite(expected_path, image)
     os.remove(path)"""
 
@@ -40,11 +43,8 @@ for p in path:
     initial_contours, initial_points_array, initial_sum_area = a.find_ellipse_coordinates_and_depth(blur_level=(3,3))
     print(p, initial_sum_area)"""
 
-directory = "/Users/joshua/vscode/hivebotics/Toilet Bowl/BAND 4"
-
 files = sorted(os.listdir(directory),key=lambda x : int(x[6:8]))
-print(files)
-
+"""
 for path in files:
     path = directory + "/" + path
     print(path)
@@ -52,6 +52,30 @@ for path in files:
                 img=path,
                 home_folder="/Users/joshua/vscode/hivebotics/robot_computer_vision"
                 )
-    a.show_img = True
-    a.display(a.img)
     
+    a.display(a.img)
+    initial_contours, initial_points_array, initial_sum_area = a.find_ellipse_coordinates_and_depth(blur_level=(3,3))
+    print(initial_sum_area)
+    a.display(a.img)
+    cv2.imwrite(path.replace(".jpeg", "_after.jpeg"), a.img)
+
+"""
+time.sleep(4)
+for path in files:
+    if "after" not in path:
+        print(path)
+        number = path[6:8]
+        path = directory + "/" + path
+        print(number)
+        keyboard.write(number)
+        keyboard.press_and_release("tab")
+        a = Analyse(
+                img=path,
+                home_folder="/Users/joshua/vscode/hivebotics/robot_computer_vision"
+                )
+        initial_contours, initial_points_array, initial_sum_area = a.find_ellipse_coordinates_and_depth(blur_level=(3,3))
+        keyboard.write(str(initial_sum_area))
+        keyboard.press_and_release("enter")
+        
+
+        
