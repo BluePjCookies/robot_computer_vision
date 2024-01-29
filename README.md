@@ -196,7 +196,7 @@ class Comparison:
 
 
 - class Comparison()
-- Comparison class requires the repository file path to initialise. Input in "../usr/.../robot_computer_vision" as the directory file path.
+- Comparison class requires the home_folder file path that contains data.json file to initialise. You can input in "../usr/.../robot_computer_vision" as the home_folder file path.
 - It will automatically source for specific files in data_folder, if has_depth is False, it will take depth to be 0
 - The program will compare the area of stains between before and after, to find out how many percentage of stains had been cleaned. 
 - It was also compare the area of stains between perfect and after to find out how many percentage of stains needs to be removed. 
